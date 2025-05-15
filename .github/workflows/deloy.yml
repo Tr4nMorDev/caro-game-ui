@@ -3,7 +3,7 @@ name: Deploy to Vercel
 on:
   push:
     branches:
-      - main # hoặc branch bạn dùng để deploy
+      - master # hoặc branch bạn dùng để deploy
 
 jobs:
   deploy:
