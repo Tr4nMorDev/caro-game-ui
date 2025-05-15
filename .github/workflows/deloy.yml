@@ -13,6 +13,16 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      # 📦 Bắt đầu tạo Deployment status để hiện dưới commit
+      - name: Create GitHub Deployment
+        uses: bobheadxi/deployments@v1
+        id: deployment
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: production
+
+      # 🚀 Deploy lên Vercel
       - name: Deploy to Vercel
         id: vercel-deploy
         uses: amondnet/vercel-action@v25
@@ -22,12 +32,24 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
 
+      # ✅ Xác nhận deployment thành công (để hiện trên commit)
+      - name: Deployment success
+        uses: bobheadxi/deployments@v1
+        if: success()
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          status: success
+          env: production
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+      # 💬 Bình luận link preview vào Pull Request (nếu là PR)
       - name: Comment deployment URL on PR
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
         with:
           script: |
-            const url = `${{ steps.vercel-deploy.outputs.vercel-url }}`;
+            const url = `${{ steps.vercel-deploy.outputs.url }}`;
             const prNumber = context.payload.pull_request.number;
             github.rest.issues.createComment({
               ...context.repo,

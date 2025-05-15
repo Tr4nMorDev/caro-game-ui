@@ -1,1 +1,4 @@
 @import "tailwindcss";
+body {
+  @apply bg-[#030014] overflow-x-hidden text-white font-sans min-h-screen w-full;
+}
