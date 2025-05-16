@@ -12,7 +12,7 @@ const HeroContent = () => {
     <motion.div
       initial="hidden"
       animate="visible"
-      className="flex flex-col md:flex-row items-center justify-center px-6 md:px-20 mt-10 md:mt-20 w-full z-[20]"
+      className="flex flex-col md:flex-row items-center justify-center px-6 md:px-20 mt-10 md:mt-20 w-full z-[20] ml-0 md:ml-20"
     >
       {/* Left content */}
       <div className="w-full flex flex-col gap-5 justify-center text-start">
