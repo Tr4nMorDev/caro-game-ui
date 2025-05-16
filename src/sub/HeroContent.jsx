@@ -7,27 +7,26 @@ import {
   slideInFromLeft,
 } from "../untils/motion";
 
-// Các animation đơn giản hóa để dùng được trong JSX
-
 const HeroContent = () => {
   return (
     <motion.div
       initial="hidden"
       animate="visible"
-      className="flex flex-row items-center justify-center px-20 mt-50 w-full z-[20]"
+      className="flex flex-col md:flex-row items-center justify-center px-6 md:px-20 mt-10 md:mt-20 w-full z-[20]"
     >
-      <div className="h-full w-full flex flex-col gap-5 justify-center m-auto text-start">
+      {/* Left content */}
+      <div className="w-full flex flex-col gap-5 justify-center text-start">
         <motion.div
           variants={slideInFromTop}
-          className="Welcome-box py-[8px] px-[7px] rounded-full border border-[#7042f88b] opacity-[0.9] flex items-center"
+          className="Welcome-box py-2 px-3 rounded-full border border-[#7042f88b] opacity-[0.9] flex items-center"
         >
-          <SparklesIcon className="text-[#b49bff] mr-[10px] h-10 w-10" />
-          <h1 className="Welcome-text text-[13px]">Caro-Reaction</h1>
+          <SparklesIcon className="text-[#b49bff] mr-2 h-8 w-8 md:h-10 md:w-10" />
+          <h1 className="Welcome-text text-sm md:text-base">Caro-Reaction</h1>
         </motion.div>
 
         <motion.div
           variants={slideInFromLeft(0.5)}
-          className="flex flex-col gap-6 mt-6 text-6xl font-bold text-white max-w-[600px] w-auto h-auto"
+          className="flex flex-col gap-4 mt-4 md:mt-6 text-3xl md:text-6xl font-bold text-white max-w-full md:max-w-[600px]"
         >
           <span>
             Welcome Play
@@ -41,31 +40,31 @@ const HeroContent = () => {
 
         <motion.p
           variants={slideInFromLeft(0.8)}
-          className="text-lg text-gray-400 my-5 max-w-[600px]"
+          className="text-base md:text-lg text-gray-400 my-4 md:my-5 max-w-full md:max-w-[600px]"
         >
-          Game được conect bằng cách chung routers wifi các bạn có thể sử dụng
-          wifi public UTH để chơi chung với nhau qua ip . Thành tích sau khi khi
-          thắng bên phải .
+          Game được conect bằng cách chung routers wifi. Các bạn có thể sử dụng
+          wifi public UTH để chơi chung với nhau qua IP. Thành tích sẽ hiển thị
+          bên phải khi chiến thắng.
         </motion.p>
 
         <motion.a
           variants={slideInFromLeft(1)}
-          className="py-2 button-primary text-center text-white cursor-pointer rounded-full border border-[#7042f88b] max-w-[200px]"
+          className="py-2 px-4 text-sm md:text-base button-primary text-center text-white cursor-pointer rounded-full border border-[#7042f88b] max-w-[150px] md:max-w-[200px]"
           href="#"
         >
           Learn More!
         </motion.a>
       </div>
 
+      {/* Right image */}
       <motion.div
         variants={slideInFromRight(0.8)}
-        className="w-full h-full flex justify-center items-center"
+        className="hidden md:flex w-full h-auto mt-10 md:mt-0 justify-center items-center"
       >
         <img
           src="/mainIconsdark.svg"
           alt="work icons"
-          height="650"
-          width="650"
+          className="w-[250px] md:w-[400px] lg:w-[650px] h-auto"
         />
       </motion.div>
     </motion.div>
