@@ -10,7 +10,7 @@ const BackgroundFirst = () => {
         autoPlay
         loop
         muted
-        className="rotate-180 absolute top-[-340px]  h-full w-full left-0 z-[1] object-cover "
+        className="rotate-180 absolute top-[-380px]  h-full w-full left-0 z-[1] object-cover bg-[#030012] "
       >
         <source src="/blackhole.webm" type="video/webm" />
         Trình duyệt của bạn không hỗ trợ thẻ video.
