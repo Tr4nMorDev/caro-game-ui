@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { SparklesIcon } from "@heroicons/react/24/solid";
+import { Link } from "react-router-dom";
 import {
   slideInFromTop,
   slideInFromRight,
@@ -12,7 +13,7 @@ const HeroContent = () => {
     <motion.div
       initial="hidden"
       animate="visible"
-      className="flex flex-col md:flex-row items-center justify-center px-6 md:px-20 mt-10 md:mt-20 w-full z-[20] ml-0 md:ml-20"
+      className="flex flex-col md:flex-row items-center justify-center px-6 md:px-20 mt-10 md:mt-20 w-full z-[30] ml-0 md:ml-20"
     >
       {/* Left content */}
       <div className="w-full flex flex-col gap-5 justify-center text-start">
@@ -42,18 +43,16 @@ const HeroContent = () => {
           variants={slideInFromLeft(0.8)}
           className="text-base md:text-lg text-gray-400 my-4 md:my-5 max-w-full md:max-w-[600px]"
         >
-          Game được conect bằng cách chung routers wifi. Các bạn có thể sử dụng
-          wifi public UTH để chơi chung với nhau qua IP. Thành tích sẽ hiển thị
-          bên phải khi chiến thắng.
+          Game được xây dựng với mục đích học tập kết nối mọi người giải trí
+          trong những giờ học căng thẳng .
         </motion.p>
 
-        <motion.a
-          variants={slideInFromLeft(1)}
+        <Link
+          to="/signup"
           className="py-2 px-4 text-sm md:text-base button-primary text-center text-white cursor-pointer rounded-full border border-[#7042f88b] max-w-[150px] md:max-w-[200px]"
-          href="#"
         >
-          Learn More!
-        </motion.a>
+          Sign up
+        </Link>
       </div>
 
       {/* Right image */}

@@ -1,5 +1,5 @@
 import HeroContent from "../sub/HeroContent";
-import Dashboard from "./Dashboard";
+import Dashboard from "../sub/Dashboard";
 
 const BackgroundFirst = () => {
   return (
@@ -18,9 +18,9 @@ const BackgroundFirst = () => {
       {/* Nội dung phía trước */}
       <div className="relative z-[2] pt-72">
         <HeroContent />
-        <div className="mt-10">
+        {/* <div className="mt-10">
           <Dashboard />
-        </div>
+        </div> */}
       </div>
     </div>
   );
