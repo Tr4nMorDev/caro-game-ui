@@ -1,20 +1,56 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import App from "./App.jsx";
-import "./App.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { BrowserRouter } from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import AppLayout from "./AppLayout.jsx"; // Tạo mới
+import BackgroundFirst from "./components/BackgroundFirst";
+import StarsCanvas from "./components/StarBackground";
+import SignupPage from "./components/SignupPage";
+import SigninPage from "./components/SigninPage.jsx";
+import "./App.css";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 const GITHUB_REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI;
 
+const router = createBrowserRouter(
+  [
+    {
+      path: "/",
+      element: <AppLayout />,
+      children: [
+        {
+          index: true,
+          element: (
+            <>
+              <BackgroundFirst />
+              <StarsCanvas />
+            </>
+          ),
+        },
+        {
+          path: "signup",
+          element: <SignupPage />,
+        },
+        {
+          path: "signin",
+          element: <SigninPage />,
+        },
+      ],
+    },
+  ],
+  {
+    future: {
+      v7_startTransition: true,
+      v7_relativeSplatPath: true,
+    },
+  }
+);
+
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </GoogleOAuthProvider>
   </StrictMode>
 );

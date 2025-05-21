@@ -53,6 +53,12 @@ const HeroContent = () => {
         >
           Sign up
         </Link>
+        <Link
+          to="/signin"
+          className="py-2 px-4 text-sm md:text-base button-primary text-center text-white cursor-pointer rounded-full border border-[#7042f88b] max-w-[150px] md:max-w-[200px]"
+        >
+          Sign in
+        </Link>
       </div>
 
       {/* Right image */}
