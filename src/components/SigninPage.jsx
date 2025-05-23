@@ -3,11 +3,14 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GoogleLogin } from "@react-oauth/google";
 import { overlayVariants, formVariants } from "../untils/motion";
+import { useNavigate } from "react-router-dom";
+
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 const GITHUB_REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI;
 
 const SigninPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -31,7 +34,7 @@ const SigninPage = () => {
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
       console.log(credentialResponse);
-      const res = await fetch("http://localhost:3000/api/google-login", {
+      const res = await fetch("http://localhost:3000/auth/google-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -41,6 +44,7 @@ const SigninPage = () => {
 
       const data = await res.json();
       console.log("Đăng nhập thành công:", data);
+      navigate("/dashboard");
     } catch (err) {
       console.error("Lỗi gửi token lên backend:", err.message);
     }

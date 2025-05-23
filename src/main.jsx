@@ -8,6 +8,7 @@ import StarsCanvas from "./components/StarBackground";
 import SignupPage from "./components/SignupPage";
 import SigninPage from "./components/SigninPage.jsx";
 import "./App.css";
+import Dashboard from "./sub/Dashboard.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -35,6 +36,10 @@ const router = createBrowserRouter(
         {
           path: "signin",
           element: <SigninPage />,
+        },
+        {
+          path: "dashboard",
+          element: <Dashboard />,
         },
       ],
     },
