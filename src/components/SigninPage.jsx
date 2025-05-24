@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { GoogleLogin } from "@react-oauth/google";
 import { overlayVariants, formVariants } from "../untils/motion";
 import { useNavigate } from "react-router-dom";
+import { googleLogin, login } from "../api/authApi";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -24,8 +25,11 @@ const SigninPage = () => {
     e.preventDefault();
 
     try {
-      // TODO: gọi API đăng nhập bằng email/password
-      console.log("Đăng nhập với:", formData);
+      const data = await login(formData);
+      console.log("Đăng nhập thành công:", data);
+      // Lưu token vào localStorage (hoặc context)
+      localStorage.setItem("token", data.token);
+      navigate("/dashboard");
     } catch (error) {
       console.error("Lỗi đăng nhập:", error.message);
     }
@@ -33,16 +37,7 @@ const SigninPage = () => {
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      console.log(credentialResponse);
-      const res = await fetch("http://localhost:3000/auth/google-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          idToken: credentialResponse.credential,
-        }),
-      });
-
-      const data = await res.json();
+      const data = await googleLogin(credentialResponse.credential);
       console.log("Đăng nhập thành công:", data);
       navigate("/dashboard");
     } catch (err) {

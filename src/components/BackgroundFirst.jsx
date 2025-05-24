@@ -1,9 +1,10 @@
-import HeroContent from "../sub/HeroContent";
+import HeroContent from "./HeroContent";
 import Dashboard from "../sub/Dashboard";
-
+import Navbar from "../sub/Navbar";
 const BackgroundFirst = () => {
   return (
     <div className="relative flex flex-col min-h-screen w-full">
+      <Navbar />
       {/* Video nền phủ toàn màn hình */}
       <video
         autoPlay
