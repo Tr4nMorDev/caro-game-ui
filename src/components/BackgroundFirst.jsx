@@ -1,4 +1,4 @@
-import HeroContent from "./HeroContent";
+import Infomation from "./Information";
 import Dashboard from "../sub/Dashboard";
 import Navbar from "../sub/Navbar";
 const BackgroundFirst = () => {
@@ -18,7 +18,7 @@ const BackgroundFirst = () => {
 
       {/* Nội dung phía trước */}
       <div className="relative z-[2] pt-72">
-        <HeroContent />
+        <Infomation />
         {/* <div className="mt-10">
           <Dashboard />
         </div> */}

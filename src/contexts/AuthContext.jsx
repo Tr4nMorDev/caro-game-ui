@@ -5,26 +5,38 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
+  const [user, setUser] = useState(() => {
+    const storedUser = sessionStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
 
-  // Tự động lấy user info từ token nếu có
+  const [token, setToken] = useState(() => sessionStorage.getItem("token"));
+
   useEffect(() => {
-    if (token) {
-      const userData = parseJwt(token);
-      setUser(userData);
+    if (token && !user) {
+      try {
+        const parsedUser = parseJwt(token);
+        if (parsedUser) {
+          setUser(parsedUser);
+          sessionStorage.setItem("user", JSON.stringify(parsedUser));
+        }
+      } catch (e) {
+        console.error("Failed to parse token", e);
+        logout();
+      }
     }
   }, [token]);
 
-  const login = (token) => {
-    localStorage.setItem("token", token);
+  const login = ({ token, user }) => {
+    sessionStorage.setItem("token", token);
+    sessionStorage.setItem("user", JSON.stringify(user));
     setToken(token);
-    const userData = parseJwt(token);
-    setUser(userData);
+    setUser(user);
   };
 
   const logout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
+    sessionStorage.removeItem("user");
     setToken(null);
     setUser(null);
     navigate("/");
@@ -41,12 +53,10 @@ export const AuthProvider = ({ children }) => {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
-// Hook để dùng context
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-// Helper: parse JWT
 function parseJwt(token) {
   try {
     const base64Url = token.split(".")[1];
@@ -59,6 +69,7 @@ function parseJwt(token) {
     );
     return JSON.parse(jsonPayload);
   } catch (e) {
+    console.error("JWT parsing error:", e);
     return null;
   }
 }

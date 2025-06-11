@@ -9,6 +9,7 @@ import SignupPage from "./components/SignupPage";
 import SigninPage from "./components/SigninPage.jsx";
 import "./App.css";
 import Dashboard from "./sub/Dashboard.jsx";
+import GameLayout from "./components/GameLayout.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
@@ -38,8 +39,8 @@ const router = createBrowserRouter(
           element: <SigninPage />,
         },
         {
-          path: "dashboard",
-          element: <Dashboard />,
+          path: "gameplay",
+          element: <GameLayout />,
         },
       ],
     },

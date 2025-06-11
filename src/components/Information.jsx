@@ -8,7 +8,7 @@ import {
   slideInFromLeft,
 } from "../untils/motion";
 
-const HeroContent = () => {
+const Information = () => {
   return (
     <motion.div
       initial="hidden"
@@ -76,4 +76,4 @@ const HeroContent = () => {
   );
 };
 
-export default HeroContent;
+export default Information;

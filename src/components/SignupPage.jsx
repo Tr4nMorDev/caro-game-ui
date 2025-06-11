@@ -2,8 +2,10 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { signup } from "../api/authApi";
+import { useNavigate } from "react-router-dom";
 import { overlayVariants, formVariants } from "../untils/motion";
 const SignupPage = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -17,8 +19,10 @@ const SignupPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log(formData);
       const result = await signup(formData);
       console.log("Đăng ký thành công:", result);
+      navigate("/signin");
     } catch (error) {
       console.error("Lỗi đăng ký:", error.message);
     }

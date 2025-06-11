@@ -4,13 +4,15 @@ import { motion } from "framer-motion";
 import { GoogleLogin } from "@react-oauth/google";
 import { overlayVariants, formVariants } from "../untils/motion";
 import { useNavigate } from "react-router-dom";
-import { googleLogin, login } from "../api/authApi";
+import { googleLogin, signin } from "../api/authApi";
+import { useAuth } from "../contexts/AuthContext";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 const GITHUB_REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI;
 
 const SigninPage = () => {
+  const { user, isAuthenticated, logout, login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
@@ -25,11 +27,10 @@ const SigninPage = () => {
     e.preventDefault();
 
     try {
-      const data = await login(formData);
-      console.log("Đăng nhập thành công:", data);
+      const data = await signin(formData);
       // Lưu token vào localStorage (hoặc context)
-      localStorage.setItem("token", data.token);
-      navigate("/dashboard");
+      login({ token: data.token, user: data.user });
+      navigate("/gameplay");
     } catch (error) {
       console.error("Lỗi đăng nhập:", error.message);
     }
@@ -37,9 +38,11 @@ const SigninPage = () => {
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
+      console.log("Google OAuth : ", credentialResponse);
       const data = await googleLogin(credentialResponse.credential);
       console.log("Đăng nhập thành công:", data);
-      navigate("/dashboard");
+      login({ token: data.token, user: data.user });
+      navigate("/gameplay");
     } catch (err) {
       console.error("Lỗi gửi token lên backend:", err.message);
     }
