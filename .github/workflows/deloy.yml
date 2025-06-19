@@ -22,6 +22,14 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           env: production
 
+      # 🛠 Cài đặt dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # 🔨 Build project
+      - name: Build project
+        run: npm run build
+
       # 🚀 Deploy lên Vercel
       - name: Deploy to Vercel
         id: vercel-deploy

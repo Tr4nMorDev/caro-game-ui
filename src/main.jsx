@@ -4,12 +4,12 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AppLayout from "./AppLayout.jsx"; // Tạo mới
 import BackgroundFirst from "./components/BackgroundFirst";
-import StarsCanvas from "./components/StarBackground";
-import SignupPage from "./components/SignupPage";
-import SigninPage from "./components/SigninPage.jsx";
+import StarsCanvas from "./sub/StarBackground.jsx";
+import SignupPage from "./page/SignupPage.jsx";
+import SigninPage from "./page/SigninPage.jsx";
 import "./App.css";
 import Dashboard from "./sub/Dashboard.jsx";
-import GameLayout from "./components/GameLayout.jsx";
+import GameLayout from "./page/GameLayout.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;

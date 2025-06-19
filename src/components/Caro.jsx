@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import IdleScreen from "./gameplay/IdleScreen";
-import InGameScreen from "./gameplay/InGameScreen";
-import MatchingScreen from "./gameplay/MatchingScreen";
+import IdleScreen from "./gamestatus/IdleScreen";
+import InGameScreen from "./gamestatus/InGameScreen";
+import MatchingScreen from "./gamestatus/MatchingScreen";
 import { useAuth } from "../contexts/AuthContext";
 import { io, Socket } from "socket.io-client";
 import {
@@ -17,6 +17,8 @@ const Caro = () => {
   const socketRef = useRef(null);
   const [players, setPlayers] = useState({ X: null, O: null });
   const [youAre, setYouAre] = useState(null); // "X" hoặc "O"
+  const [opponentId, setopponentId] = useState("");
+  const [matchedId, setmatchedId] = useState("");
   useEffect(() => {
     if (status === "IN_GAME" && players.X && players.O) {
       console.log("🎮 Ready to render game with:", players, youAre);
@@ -27,7 +29,7 @@ const Caro = () => {
     if (status === "MATCHING" && !socketRef.current) {
       const socket = io(API_BASE_URL, {
         transports: ["websocket"],
-        query: { token },
+        auth: { token },
       });
 
       socketRef.current = socket;
@@ -39,10 +41,14 @@ const Caro = () => {
 
       socket.on("matched", (matchData) => {
         console.log("🎯 Matched:", matchData);
-
+        const { playerXId, playerOId, id } = matchData;
+        const opponentId = user.id === playerXId ? playerOId : playerXId;
+        console.log("ID doi thu :", opponentId);
+        console.log("Id tran game :", id);
         setPlayers(matchData.players);
         setYouAre(matchData.youAre);
-
+        setopponentId(opponentId);
+        setmatchedId(id);
         setStatus("IN_GAME"); // vẫn giữ socketRef
       });
 
@@ -58,15 +64,12 @@ const Caro = () => {
       socket.on("waiting", () => {
         console.log("⌛ Waiting for opponent...");
       });
-
-      socket.on("move", () => {});
     }
   }, [status, token, user.id]);
-
   // 🔌 Cleanup chỉ khi chuyển về IDLE
   useEffect(() => {
     if (status === "IDLE" && socketRef.current) {
-      console.log("🧹 Disconnecting socket due to IDLE");
+      console.log("🧹 Disconnecting socket");
       socketRef.current.disconnect();
       socketRef.current = null;
     }
@@ -95,9 +98,8 @@ const Caro = () => {
     }
   };
   const onExitGame = async () => {
-    try {
-      const result = await exitCurrentMatch(token);
-    } catch {}
+    const result = await exitCurrentMatch(token);
+    console.log("✅ Exit game:", result);
     setStatus("IDLE");
   };
   const renderScreen = () => {
@@ -112,6 +114,9 @@ const Caro = () => {
             onExitGame={onExitGame}
             players={players}
             youAre={youAre}
+            socket={socketRef.current}
+            matchId={matchedId}
+            opponentId={opponentId}
           />
         );
       default:

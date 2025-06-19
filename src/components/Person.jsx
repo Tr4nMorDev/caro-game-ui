@@ -4,9 +4,11 @@ import "../App.css";
 import { Menu, X } from "lucide-react"; // Icon menu, bạn cần cài `lucide-react`
 import { useAuth } from "../contexts/AuthContext";
 import { signout } from "../api/authApi";
+import { useNavigate } from "react-router-dom"; // ✅ sửa ở đây
 const Navbar = () => {
   const { user, isAuthenticated, logout, token } = useAuth();
   const [avatarUrl, setAvatarUrl] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user?.avatar) {

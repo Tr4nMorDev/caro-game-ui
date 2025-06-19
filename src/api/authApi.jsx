@@ -159,8 +159,8 @@ export const takeuser = async (token, userId) => {
 };
 
 export const exitCurrentMatch = async (token) => {
-  const res = await fetch(`${API_BASE_URL}/match/exit`, {
-    method: "POST",
+  const res = await fetch(`${API_BASE_URL}/api/match/exit`, {
+    method: "PUT",
     headers: {
       Authorization: `Bearer ${token}`,
     },

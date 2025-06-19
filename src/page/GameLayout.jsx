@@ -1,6 +1,6 @@
 import { PersonStanding } from "lucide-react";
-import Person from "./Person";
-import Caro from "./Caro";
+import Person from "../components/Person";
+import Caro from "../components/Caro";
 
 const GameLayout = () => {
   return (
