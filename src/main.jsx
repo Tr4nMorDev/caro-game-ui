@@ -12,8 +12,7 @@ import Dashboard from "./sub/Dashboard.jsx";
 import GameLayout from "./page/GameLayout.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const GITHUB_CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
-const GITHUB_REDIRECT_URI = import.meta.env.VITE_GITHUB_REDIRECT_URI;
+
 
 const router = createBrowserRouter(
   [

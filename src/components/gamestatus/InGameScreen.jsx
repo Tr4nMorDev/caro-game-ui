@@ -10,6 +10,7 @@ const InGameScreen = ({
   socket,
   matchId,
   opponentId,
+  onReplay
 }) => {
   const { user } = useAuth();
   const [board, setBoard] = useState(Array(size * size).fill(null));

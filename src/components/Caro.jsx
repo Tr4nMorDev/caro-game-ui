@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import IdleScreen from "./gamestatus/IdleScreen";
 import InGameScreen from "./gamestatus/InGameScreen";
 import MatchingScreen from "./gamestatus/MatchingScreen";
+import Gameend from "./gamestatus/Gameend"
 import { useAuth } from "../contexts/AuthContext";
 import { io, Socket } from "socket.io-client";
 import {
@@ -12,13 +13,19 @@ import {
 } from "../api/authApi";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "";
 const Caro = () => {
-  const [status, setStatus] = useState("IDLE"); // IDLE | MATCHING | IN_GAME
+  const [status, setStatus] = useState("IDLE"); // IDLE | MATCHING | IN_GAME | WINER
   const { user, token } = useAuth();
   const socketRef = useRef(null);
   const [players, setPlayers] = useState({ X: null, O: null });
   const [youAre, setYouAre] = useState(null); // "X" hoặc "O"
   const [opponentId, setopponentId] = useState("");
   const [matchedId, setmatchedId] = useState("");
+  const [isWinner , setisWinner] = useState(false);
+  const handleReplay = () => {
+    // Reset game logic ở đây
+    setStatus("IDLE");
+  };
+
   useEffect(() => {
     if (status === "IN_GAME" && players.X && players.O) {
       console.log("🎮 Ready to render game with:", players, youAre);
@@ -51,9 +58,10 @@ const Caro = () => {
         setmatchedId(id);
         setStatus("IN_GAME"); // vẫn giữ socketRef
       });
-
+      
       socket.on("timeout", () => {
         console.log("⏰ Timeout");
+        socket.emit("timeout" , user.id);
         setStatus("IDLE"); // sẽ bị disconnect ở useEffect dưới
       });
 
@@ -64,6 +72,15 @@ const Caro = () => {
       socket.on("waiting", () => {
         console.log("⌛ Waiting for opponent...");
       });
+      socket.on("gameEnd", (gameEndPayload) =>{
+        console.log("Game end payload :" , gameEndPayload.winnerId);
+        console.log("Game end")
+        if(gameEndPayload.winnerId === user.id ) {
+          console.log("Ban da win  ", gameEndPayload.winnerId);
+          setisWinner(true);
+        }
+        setStatus("WINER");
+      })
     }
   }, [status, token, user.id]);
   // 🔌 Cleanup chỉ khi chuyển về IDLE
@@ -117,8 +134,17 @@ const Caro = () => {
             socket={socketRef.current}
             matchId={matchedId}
             opponentId={opponentId}
+            onReplay={handleReplay}
           />
-        );
+        )
+      case "WINER":
+        return (
+          <Gameend
+            isWinner={isWinner}
+            onReplay={handleReplay}
+          />
+        )
+        ;
       default:
         return null;
     }
