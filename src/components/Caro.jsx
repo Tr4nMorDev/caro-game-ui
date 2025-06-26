@@ -10,6 +10,7 @@ import {
   cancelMatchmaking,
   takeuser,
   exitCurrentMatch,
+  startMatchWithAI
 } from "../api/authApi";
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "";
 const Caro = () => {
@@ -119,10 +120,15 @@ const Caro = () => {
     console.log("✅ Exit game:", result);
     setStatus("IDLE");
   };
+  const onPlayCarowithAI = async () => {
+    const result = await startMatchWithAI(token);
+    console.log("đã khởi tạo màn chơi" , result);
+    setStatus("IN_GAME_AI");
+  }
   const renderScreen = () => {
     switch (status) {
       case "IDLE":
-        return <IdleScreen onFindMatch={handleFindMatch} />;
+        return <IdleScreen onFindMatch={handleFindMatch} onPlayCaro={onPlayCarowithAI} />;
       case "MATCHING":
         return <MatchingScreen onCancel={handleCancelMatch} />;
       case "IN_GAME":

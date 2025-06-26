@@ -172,3 +172,21 @@ export const exitCurrentMatch = async (token) => {
 
   return await res.json();
 };
+
+export const startMatchWithAI = async (token) => {
+  const response = await fetch("/api/play-with-ai", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({}),
+  });
+
+  if (!response.ok) {
+    throw new Error("❌ Không thể bắt đầu game với AI.");
+  }
+
+  const data = await response.json();
+  return data;
+}
