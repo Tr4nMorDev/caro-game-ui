@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
 
 export const signup = async (formData) => {
   try {
@@ -174,19 +174,64 @@ export const exitCurrentMatch = async (token) => {
 };
 
 export const startMatchWithAI = async (token) => {
-  const response = await fetch("/api/play-with-ai", {
-    method: "POST",
+  const response = await fetch(`${API_BASE_URL}/api/play-with-ai`, {
+    method: "PATCH",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({}),
   });
 
   if (!response.ok) {
+    const errorText = await response.text(); // log thêm lỗi nếu có
+    console.error("❌ Server error:", errorText);
     throw new Error("❌ Không thể bắt đầu game với AI.");
   }
 
-  const data = await response.json();
-  return data;
+  // ✅ check nếu có nội dung
+  const text = await response.text();
+  if (!text) {
+    console.warn("⚠️ Empty response body from /play-with-ai");
+    return {};
+  }
+
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    console.error("❌ JSON parse error:", err.message, text);
+    throw new Error("❌ Lỗi khi phân tích phản hồi từ server.");
+  }
+};
+
+export const move = async (token , newBoard , index) => {
+  try {
+      const response = await fetch(`${API_BASE_URL}/api/play-with-ai/move`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ board: newBoard, moveIndex: index }),
+      });
+      const result = await response.json();
+      return result;
+  }catch (err){
+    console.log(err.message)
+  } 
+}
+export const OutPlayWithAI = async (token) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/play-with-ai/exit`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        }
+      });
+      const result = await response.json();
+      console.log(result)
+      return result;
+    }catch (err){
+      console.log(err.message)
+  } 
 }

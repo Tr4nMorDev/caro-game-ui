@@ -8,7 +8,6 @@ import StarsCanvas from "./sub/StarBackground.jsx";
 import SignupPage from "./page/SignupPage.jsx";
 import SigninPage from "./page/SigninPage.jsx";
 import "./App.css";
-import Dashboard from "./sub/Dashboard.jsx";
 import GameLayout from "./page/GameLayout.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;

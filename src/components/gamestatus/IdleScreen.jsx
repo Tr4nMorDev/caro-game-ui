@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion , AnimatePresence } from "framer-motion";
 
 const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleClick = async (action) => {
-    setIsVisible(false); // trigger fade-out
-    setTimeout(() => {
-      action(); // call parent callback
-    }, 400); // match exit duration
-  };
+  await action(); // Gọi trước
+  setIsVisible(false); // Sau đó mới fade-out
+};
 
   return (
     <div className="min-h-screen w-full flex justify-center items-center bg-gradient-to-br from-[#0f172a] to-[#0f172a] text-white font-sans px-4">
@@ -56,7 +54,7 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
                   onClick={() => handleClick(onPlayCaro)}
                 >
                   🕹️ Chơi ngay
-                </button>
+                </button> 
               </motion.div>
             </div>
           </motion.div>

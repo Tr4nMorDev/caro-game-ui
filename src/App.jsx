@@ -7,7 +7,7 @@ import SignupPage from "./components/SignupPage";
 import SigninPage from "./components/SigninPage";
 import GameLayout from "./components/GameLayout";
 function App() {
-  const [count, setCount] = useState(0);
+  // const [count, setCount] = useState(0);
 
   return (
     <>

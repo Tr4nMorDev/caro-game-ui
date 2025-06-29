@@ -12,7 +12,6 @@ const InGameScreen = ({
   opponentId,
   onReplay
 }) => {
-  const { user } = useAuth();
   const [board, setBoard] = useState(Array(size * size).fill(null));
   const [currentTurn, setCurrentTurn] = useState("X");
   const [myTimer, setMyTimer] = useState(30);

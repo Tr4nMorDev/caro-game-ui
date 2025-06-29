@@ -8,20 +8,23 @@ import { io, Socket } from "socket.io-client";
 import {
   startMatchmaking,
   cancelMatchmaking,
-  takeuser,
   exitCurrentMatch,
   startMatchWithAI
 } from "../api/authApi";
+import PlayAIScreen from "./gamestatus/PlayAIScreen";
+
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "";
 const Caro = () => {
   const [status, setStatus] = useState("IDLE"); // IDLE | MATCHING | IN_GAME | WINER
   const { user, token } = useAuth();
   const socketRef = useRef(null);
+  const aiSocketRef = useRef(null);
   const [players, setPlayers] = useState({ X: null, O: null });
   const [youAre, setYouAre] = useState(null); // "X" hoặc "O"
   const [opponentId, setopponentId] = useState("");
   const [matchedId, setmatchedId] = useState("");
   const [isWinner , setisWinner] = useState(false);
+  const [aiMatchData, setAiMatchData] = useState(null); // <-- Thêm state này
   const handleReplay = () => {
     // Reset game logic ở đây
     setStatus("IDLE");
@@ -34,7 +37,7 @@ const Caro = () => {
   }, [status, players, youAre]);
   useEffect(() => {
     // 🔌 Tạo socket khi bắt đầu MATCHING
-    if (status === "MATCHING" && !socketRef.current) {
+    if (status === "MATCHING"  && !socketRef.current) {
       const socket = io(API_BASE_URL, {
         transports: ["websocket"],
         auth: { token },
@@ -58,6 +61,7 @@ const Caro = () => {
         setopponentId(opponentId);
         setmatchedId(id);
         setStatus("IN_GAME"); // vẫn giữ socketRef
+        
       });
       
       socket.on("timeout", () => {
@@ -82,7 +86,24 @@ const Caro = () => {
         }
         setStatus("WINER");
       })
+
     }
+    if (status === "IN_GAME_AI" && !aiSocketRef.current) {
+      const aiSocket = io(API_BASE_URL, {
+        transports: ["websocket"],
+        auth: { token },
+      });
+
+      aiSocketRef.current = aiSocket;
+
+      aiSocket.on("connect", () => {
+        console.log("✅ AI socket connected:", aiSocket.id);
+        
+      });
+
+  // Optional: bạn có thể lắng nghe move từ AI tại đây nếu backend emit
+  // aiSocket.on("AImove", (...))
+}
   }, [status, token, user.id]);
   // 🔌 Cleanup chỉ khi chuyển về IDLE
   useEffect(() => {
@@ -106,6 +127,7 @@ const Caro = () => {
   const handleCancelMatch = async () => {
     try {
       const result = await cancelMatchmaking(token);
+      console.log(result)
       if (socketRef.current) {
         socketRef.current.disconnect();
         socketRef.current = null;
@@ -123,6 +145,7 @@ const Caro = () => {
   const onPlayCarowithAI = async () => {
     const result = await startMatchWithAI(token);
     console.log("đã khởi tạo màn chơi" , result);
+    setAiMatchData(result); // <-- Lưu match data
     setStatus("IN_GAME_AI");
   }
   const renderScreen = () => {
@@ -141,6 +164,7 @@ const Caro = () => {
             matchId={matchedId}
             opponentId={opponentId}
             onReplay={handleReplay}
+            
           />
         )
       case "WINER":
@@ -150,7 +174,8 @@ const Caro = () => {
             onReplay={handleReplay}
           />
         )
-        ;
+      case "IN_GAME_AI":
+        return <PlayAIScreen onReplay={handleReplay} socket={aiSocketRef.current} data={aiMatchData} />;
       default:
         return null;
     }

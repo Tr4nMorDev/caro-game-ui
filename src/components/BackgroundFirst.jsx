@@ -1,5 +1,4 @@
 import Infomation from "./Information";
-import Dashboard from "../sub/Dashboard";
 import Navbar from "../sub/Navbar";
 const BackgroundFirst = () => {
   return (

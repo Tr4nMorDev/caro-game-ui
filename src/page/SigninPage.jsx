@@ -6,7 +6,6 @@ import { overlayVariants, formVariants } from "../untils/motion";
 import { useNavigate } from "react-router-dom";
 import { googleLogin, signin } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
-console.log("GOOGLE_CLIENT_ID =", import.meta.env.VITE_GOOGLE_CLIENT_ID);
 const SigninPage = () => {
   const { user, isAuthenticated, logout, login } = useAuth();
   const navigate = useNavigate();
