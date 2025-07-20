@@ -19,7 +19,7 @@ const Information = () => {
       <div className="w-full flex flex-col gap-5 justify-center text-start">
         <motion.div
           variants={slideInFromTop}
-          className="Welcome-box py-2 px-3 rounded-full border border-[#7042f88b] opacity-[0.9] flex items-center"
+          className="Welcome-box py-2 px-4 rounded-full border border-[#7042f88b] opacity-[0.9] flex items-center"
         >
           <SparklesIcon className="text-[#b49bff] mr-2 h-8 w-8 md:h-10 md:w-10" />
           <h1 className="Welcome-text text-sm md:text-base">Caro-Reaction</h1>
@@ -43,8 +43,7 @@ const Information = () => {
           variants={slideInFromLeft(0.8)}
           className="text-base md:text-lg text-gray-400 my-4 md:my-5 max-w-full md:max-w-[600px]"
         >
-          Game được xây dựng với mục đích học tập kết nối mọi người giải trí
-          trong những giờ học căng thẳng .
+          Thắng bại tại kĩ năng 
         </motion.p>
 
         <Link

@@ -86,7 +86,6 @@ const Caro = () => {
         }
         setStatus("WINER");
       })
-
     }
     if (status === "IN_GAME_AI" && !aiSocketRef.current) {
       const aiSocket = io(API_BASE_URL, {
