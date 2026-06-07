@@ -1,65 +1,75 @@
-import { useState, useEffect } from "react";
-import { Socials } from "../untils/constants";
-import "../App.css";
-import { Menu, X } from "lucide-react"; // Icon menu, bạn cần cài `lucide-react`
-import { useAuth } from "../contexts/AuthContext";
+import { LogOut, UserRound } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { signout } from "../api/authApi";
-import { useNavigate } from "react-router-dom"; // ✅ sửa ở đây
-const Navbar = () => {
-  const { user, isAuthenticated, logout, token } = useAuth();
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const navigate = useNavigate();
+import { useAuth } from "../contexts/AuthContext";
 
-  useEffect(() => {
-    if (user?.avatar) {
-      setAvatarUrl(user.avatar);
-    }
-  }, [user?.avatar]);
+const Person = () => {
+  const { user, isAuthenticated, logout, token } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
-      await signout(token); // Gọi API để logout (nếu có xử lý backend)
-      logout(); // Xoá token + user ở frontend
-      navigate("/"); // Quay lại trang chủ
+      if (token) {
+        await signout(token);
+      }
     } catch (error) {
-      console.error("Lỗi khi đăng xuất:", error.message);
+      console.error("Logout error:", error.message);
+    } finally {
+      logout();
+      navigate("/");
     }
   };
-  return (
-    <div className="w-full fixed top-0 z-50 backdrop-blur-md bg-[#03001417] shadow-lg shadow-[#2A0E61]/50">
-      <div className="flex items-center justify-between px-6 py-4 md:px-20 h-[65px]">
-        {/* Logo + Name */}
-        <div className="flex items-center gap-3">
-          <div className="p-1 border-2 border-white rounded">
-            {user?.avatar && (
-              <img
-                src={avatarUrl}
-                alt="avatar"
-                width={50}
-                height={50}
-                className="rounded hover:animate-slowspin"
-              />
-            )}
-          </div>
-          <a
-            className="ml-2 font-bold  md:block text-gray-300"
-            href="https://github.com/Tr4nMorDev"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {user.name}
-          </a>
-        </div>
 
-        {/* Desktop Menu */}
-        <div className=" md:flex items-center gap-10">
-          <div className="flex items-center gap-6 px-6 py-2 border border-[#7042f861] bg-[#0300145e] rounded-full text-gray-200 cursor-pointer">
-            <span onClick={handleLogout}>Đăng xuất</span>
+  if (!isAuthenticated || !user) {
+    return (
+      <header className="flex w-full items-center justify-between rounded-lg border border-white/10 bg-white/5 px-4 py-3 shadow-lg shadow-black/10">
+        <div>
+          <p className="text-sm font-semibold text-white">Caro Online</p>
+          <p className="text-xs text-slate-400">Vui long dang nhap de choi</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => navigate("/signin")}
+          className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+        >
+          Dang nhap
+        </button>
+      </header>
+    );
+  }
+
+  return (
+    <header className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 shadow-lg shadow-black/10">
+      <div className="flex min-w-0 items-center gap-3">
+        {user.avatar ? (
+          <img
+            src={user.avatar}
+            alt={user.name || "Player"}
+            className="h-11 w-11 rounded-md border border-white/20 object-cover"
+          />
+        ) : (
+          <div className="flex h-11 w-11 items-center justify-center rounded-md border border-white/20 bg-slate-800">
+            <UserRound className="h-5 w-5 text-slate-300" />
           </div>
+        )}
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-white">
+            {user.name || user.email || "Player"}
+          </p>
+          <p className="text-xs text-slate-400">San sang vao tran</p>
         </div>
       </div>
-    </div>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        className="inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-slate-200 transition hover:border-red-400/60 hover:bg-red-500/10 hover:text-red-200"
+      >
+        <LogOut className="h-4 w-4" />
+        Dang xuat
+      </button>
+    </header>
   );
 };
 
-export default Navbar;
+export default Person;

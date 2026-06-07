@@ -13,7 +13,7 @@ import {
 } from "../api/authApi";
 import PlayAIScreen from "./gamestatus/PlayAIScreen";
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
 const Caro = () => {
   const [status, setStatus] = useState("IDLE"); // IDLE | MATCHING | IN_GAME | WINER
   const { user, token } = useAuth();
@@ -37,6 +37,8 @@ const Caro = () => {
   }, [status, players, youAre]);
   useEffect(() => {
     // 🔌 Tạo socket khi bắt đầu MATCHING
+    if (!user?.id || !token) return;
+
     if (status === "MATCHING"  && !socketRef.current) {
       const socket = io(API_BASE_URL, {
         transports: ["websocket"],
@@ -104,7 +106,7 @@ const Caro = () => {
   // Optional: bạn có thể lắng nghe move từ AI tại đây nếu backend emit
   // aiSocket.on("AImove", (...))
 }
-  }, [status, token, user.id]);
+  }, [status, token, user?.id]);
   // 🔌 Cleanup chỉ khi chuyển về IDLE
   useEffect(() => {
     if (status === "IDLE" && socketRef.current) {
@@ -181,10 +183,21 @@ const Caro = () => {
     }
   };
 
+  if (!user || !token) {
+    return (
+      <section className="w-full max-w-xl rounded-lg border border-white/10 bg-white/5 p-6 text-center shadow-xl shadow-black/20">
+        <h1 className="text-2xl font-bold text-white">Can dang nhap</h1>
+        <p className="mt-2 text-sm text-slate-400">
+          Hay dang nhap de tim tran hoac choi voi AI.
+        </p>
+      </section>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-[#0f172a] flex flex-col items-center justify-center text-white">
+    <section className="flex w-full items-center justify-center text-white">
       {renderScreen()}
-    </div>
+    </section>
   );
 };
 

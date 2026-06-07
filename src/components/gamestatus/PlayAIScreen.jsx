@@ -1,151 +1,176 @@
-import React, { useState, useEffect } from "react";
+import { Bot, UserRound } from "lucide-react";
+import { useEffect, useState } from "react";
+import { OutPlayWithAI } from "../../api/authApi";
 import { useAuth } from "../../contexts/AuthContext";
-import { move } from "../../api/authApi";
-import {OutPlayWithAI} from "../../api/authApi"
 
 const size = 15;
 
-const PlayAIScreen = ({ onReplay , socket , data }) => {
+const PlayAIScreen = ({ onReplay, socket, data }) => {
   const { user, token } = useAuth();
   const [board, setBoard] = useState(data?.board || Array(size * size).fill(null));
   const [currentTurn, setCurrentTurn] = useState("X");
   const [gameOver, setGameOver] = useState(false);
   const [myTimer, setMyTimer] = useState(30);
   const [aiTimer, setAiTimer] = useState(30);
-  useEffect(() => {
-  console.log("data:", data.board);
-}, [data]);
 
   const handleDeleteRedis = async () => {
-      const result = await OutPlayWithAI(token);
-      console.log(result)
-      onReplay()
+    await OutPlayWithAI(token);
+    onReplay();
   };
+
   useEffect(() => {
     if (gameOver) return;
-    if (currentTurn === "X") {
-      setMyTimer(30);
-      const interval = setInterval(() => {
-        setMyTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
+
+    const isMyTurn = currentTurn === "X";
+    const interval = setInterval(() => {
+      if (isMyTurn) {
+        setMyTimer((current) => {
+          if (current <= 1) {
             setGameOver(true);
             return 0;
           }
-          return prev - 1;
+          return current - 1;
         });
-      }, 1000);
-      return () => clearInterval(interval);
+      } else {
+        setAiTimer((current) => Math.max(0, current - 1));
+      }
+    }, 1000);
+
+    if (isMyTurn) {
+      setMyTimer(30);
     } else {
       setAiTimer(30);
-      const interval = setInterval(() => {
-        setAiTimer((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-      return () => clearInterval(interval);
     }
+
+    return () => clearInterval(interval);
   }, [currentTurn, gameOver]);
-  // 
+
   useEffect(() => {
-  if (!socket) return;
+    if (!socket) return;
 
-  const handleMoveMade = ({ index, symbol, nextTurn, isWin, winnerId }) => {
-    setBoard(prev => {
-      const newBoard = [...prev];
-      newBoard[index] = symbol;
-      return newBoard;
-    });
+    const handleMoveMade = ({ index, symbol, nextTurn, isWin }) => {
+      setBoard((previousBoard) => {
+        const newBoard = [...previousBoard];
+        newBoard[index] = symbol;
+        return newBoard;
+      });
 
-    setCurrentTurn(nextTurn || null);
+      setCurrentTurn(nextTurn || (symbol === "X" ? "O" : "X"));
 
-    if (isWin) {
-      setGameOver(true);
-      console.log("Winner:", winnerId);
-    }
-  };
+      if (isWin) {
+        setGameOver(true);
+      }
+    };
 
-  socket.on("AImove", handleMoveMade);
-  return () => socket.off("AImove", handleMoveMade);
-}, [socket]);
-    
+    socket.on("AImove", handleMoveMade);
+    return () => socket.off("AImove", handleMoveMade);
+  }, [socket]);
 
   const handleClick = (index) => {
-  if (board[index] || gameOver || currentTurn !== "X") return;
+    if (!socket || board[index] || gameOver || currentTurn !== "X") return;
 
-  const newBoard = [...board];
-  newBoard[index] = "X";
-  setBoard(newBoard);
-  setCurrentTurn("O");
-  console.log("index gửi đi :" , index , newBoard);
-  socket.emit("move", { index, board: newBoard });
-};
+    const newBoard = [...board];
+    newBoard[index] = "X";
+    setBoard(newBoard);
+    setCurrentTurn("O");
+    socket.emit("move", { index, board: newBoard });
+  };
 
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="flex items-center justify-center gap-10">
-        {/* Player Info */}
-        <div className={`flex items-center gap-2 p-2 rounded ${currentTurn === "X" ? "ring-4 ring-green-400" : ""}`}>
-          <div className="text-white text-sm text-center">
-            <div className="font-bold">{user?.name || "Bạn"}</div>
-            <div className="bg-teal-400 rounded px-2 text-sm text-black font-semibold">
-              {currentTurn === "X" ? `${myTimer}s` : "Chờ..."}
-            </div>
-          </div>
-          <div className="w-10 h-10 rounded-full ring-4 ring-teal-400 bg-white flex items-center justify-center text-black">
-            👤
-          </div>
-          <div className="text-2xl">❌</div>
+    <div className="flex w-full flex-col items-center gap-4">
+      <div className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+        <AiPlayerPanel
+          icon={<UserRound className="h-5 w-5" />}
+          name={user?.name || "Ban"}
+          symbol="X"
+          timer={myTimer}
+          active={currentTurn === "X"}
+        />
+        <div className="hidden text-center text-xs font-semibold uppercase tracking-widest text-slate-500 sm:block">
+          vs
         </div>
+        <AiPlayerPanel
+          icon={<Bot className="h-5 w-5" />}
+          name="AI"
+          symbol="O"
+          timer={aiTimer}
+          active={currentTurn === "O"}
+          align="right"
+        />
+      </div>
 
-        {/* AI Info */}
-        <div className={`flex items-center gap-2 p-2 rounded ${currentTurn === "O" ? "ring-4 ring-green-400" : ""}`}>
-          <div className="text-2xl">⭕</div>
-          <div className="w-10 h-10 rounded-full ring-4 ring-teal-400 bg-white flex items-center justify-center text-black">
-            🤖
-          </div>
-          <div className="text-white text-sm text-center">
-            <div className="font-bold">AI</div>
-            <div className="bg-teal-400 rounded px-2 text-sm text-black font-semibold">
-              {currentTurn === "O" ? `${aiTimer}s` : "Chờ..."}
-            </div>
-          </div>
+      <div
+        className="overflow-hidden rounded-lg border border-slate-700 bg-white shadow-2xl shadow-black/30"
+        style={{ width: "min(92vw, 600px)" }}
+      >
+        <div
+          className="grid aspect-square"
+          style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+        >
+          {board.map((cell, index) => (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleClick(index)}
+              className="aspect-square border border-slate-300 text-center text-sm font-bold leading-none transition hover:bg-cyan-50 disabled:cursor-not-allowed sm:text-base"
+              disabled={Boolean(cell) || gameOver || currentTurn !== "X"}
+            >
+              {cell === "X" && <span className="text-red-600">X</span>}
+              {cell === "O" && <span className="text-blue-600">O</span>}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* Board */}
-      <div
-  className={`grid`}
-  style={{
-    gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))`,
-    width: `${size * 40}px`,
-  }}
->
-  {board.map((cell, i) => (
-    <div
-      key={i}
-      onClick={() => handleClick(i)}
-      className="aspect-square border border-black hover:border-red-500 flex items-center justify-center cursor-pointer select-none"
-      style={{ fontSize: 20, fontWeight: "bold" }}
-    >
-      {cell === "X" && <span className="text-red-600" style={{ fontSize: 18 }}>X</span>}
-      {cell === "O" && <span className="text-blue-600" style={{ fontSize: 18 }}>O</span>}
-    </div>
-  ))}
-</div>
+      {gameOver && (
+        <div className="rounded-md border border-white/10 bg-white/[0.04] px-4 py-2 text-sm text-slate-200">
+          Tran da ket thuc
+        </div>
+      )}
 
-
-      {gameOver && <div className="text-white mt-4 text-lg">Trận đã kết thúc!</div>}
-
-      <button className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700" onClick={handleDeleteRedis}>
-        Thoát trận
+      <button
+        type="button"
+        className="rounded-md border border-red-400/40 px-5 py-2 text-sm font-semibold text-red-200 transition hover:bg-red-500/10"
+        onClick={handleDeleteRedis}
+      >
+        Thoat tran
       </button>
     </div>
   );
 };
+
+const AiPlayerPanel = ({ icon, name, symbol, timer, active, align }) => (
+  <div
+    className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
+      active
+        ? "border-emerald-400/70 bg-emerald-400/10"
+        : "border-white/10 bg-white/[0.04]"
+    } ${align === "right" ? "sm:justify-end" : ""}`}
+  >
+    {align === "right" && <SymbolBadge symbol={symbol} />}
+    <div className="flex h-10 w-10 items-center justify-center rounded-md border border-white/20 bg-slate-900 text-slate-200">
+      {icon}
+    </div>
+    <div className={`min-w-0 ${align === "right" ? "sm:text-right" : ""}`}>
+      <p className="truncate text-sm font-semibold text-white">{name}</p>
+      <p className="text-xs text-slate-400">
+        {active ? `${timer}s` : "Cho luot"}
+      </p>
+    </div>
+    {align !== "right" && <SymbolBadge symbol={symbol} />}
+  </div>
+);
+
+const SymbolBadge = ({ symbol }) => (
+  <span
+    className={`flex h-8 w-8 items-center justify-center rounded-md text-sm font-black ${
+      symbol === "X"
+        ? "bg-red-500/15 text-red-300"
+        : "bg-blue-500/15 text-blue-300"
+    }`}
+  >
+    {symbol}
+  </span>
+);
 
 export default PlayAIScreen;

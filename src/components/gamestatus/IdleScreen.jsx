@@ -1,61 +1,52 @@
-import React, { useState } from "react";
-import { motion , AnimatePresence } from "framer-motion";
+import { Bot, Swords } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useState } from "react";
 
 const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleClick = async (action) => {
-  await action(); // Gọi trước
-  setIsVisible(false); // Sau đó mới fade-out
-};
+    await action();
+    setIsVisible(false);
+  };
 
   return (
-    <div className="min-h-screen w-full flex justify-center items-center bg-gradient-to-br from-[#0f172a] to-[#0f172a] text-white font-sans px-4">
+    <div className="flex w-full justify-center">
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            className="flex flex-col items-center w-full"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
+            className="w-full max-w-4xl rounded-lg border border-white/10 bg-white/[0.04] p-5 shadow-2xl shadow-black/20 sm:p-6"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
           >
-            <h1 className="text-5xl font-extrabold mb-10">🎮 CỜ CARO ONLINE</h1>
+            <div className="mb-6 text-center">
+              <h1 className="text-3xl font-bold tracking-normal text-white sm:text-4xl">
+                Co Caro Online
+              </h1>
+              <p className="mt-2 text-sm text-slate-400">
+                Chon che do choi va bat dau tran dau.
+              </p>
+            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 w-full max-w-5xl px-8">
-              {/* Matchmaking Panel */}
-              <motion.div
-                className="bg-black bg-opacity-30 rounded-2xl shadow-lg p-6 text-center hover:scale-105 transition-transform"
-                whileHover={{ scale: 1.05 }}
-              >
-                <h2 className="text-3xl font-bold mb-2">🎯 Tìm Trận Đấu</h2>
-                <p className="text-gray-300 mb-4">
-                  Tham gia chiến đấu cùng người chơi thật
-                </p>
-                <button
-                  className="w-full py-3 bg-green-600 hover:bg-green-500 rounded-xl text-xl font-semibold shadow-lg cursor-pointer"
-                  onClick={() => handleClick(onFindMatch)}
-                >
-                  🔍 Bắt đầu tìm trận
-                </button>
-              </motion.div>
-
-              {/* AI Mode Panel */}
-              <motion.div
-                className="bg-black bg-opacity-30 rounded-2xl shadow-lg p-6 text-center hover:scale-105 transition-transform "
-                whileHover={{ scale: 1.05 }}
-              >
-                <h2 className="text-3xl font-bold mb-2">🤖 Chế Độ AI</h2>
-                <p className="text-gray-300 mb-4">
-                  Chơi với máy để luyện tập kỹ năng
-                </p>
-                <button
-                  className="w-full py-3 bg-purple-600 hover:bg-purple-500 rounded-xl text-xl font-semibold shadow-lg cursor-pointer"
-                  onClick={() => handleClick(onPlayCaro)}
-                >
-                  🕹️ Chơi ngay
-                </button> 
-              </motion.div>
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <ModeCard
+                icon={<Swords className="h-6 w-6" />}
+                title="Dau voi nguoi choi"
+                description="Tim doi thu ngau nhien va vao tran PvP."
+                buttonLabel="Tim tran"
+                buttonClass="bg-emerald-500 text-slate-950 hover:bg-emerald-400"
+                onClick={() => handleClick(onFindMatch)}
+              />
+              <ModeCard
+                icon={<Bot className="h-6 w-6" />}
+                title="Choi voi AI"
+                description="Tap luyen nhanh voi ban co 15x15."
+                buttonLabel="Choi ngay"
+                buttonClass="bg-cyan-500 text-slate-950 hover:bg-cyan-400"
+                onClick={() => handleClick(onPlayCaro)}
+              />
             </div>
           </motion.div>
         )}
@@ -63,5 +54,35 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
     </div>
   );
 };
+
+const ModeCard = ({
+  icon,
+  title,
+  description,
+  buttonLabel,
+  buttonClass,
+  onClick,
+}) => (
+  <motion.div
+    className="flex min-h-52 flex-col justify-between rounded-lg border border-white/10 bg-slate-950/40 p-5"
+    whileHover={{ y: -3 }}
+    transition={{ duration: 0.2 }}
+  >
+    <div>
+      <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-white/10 text-cyan-200">
+        {icon}
+      </div>
+      <h2 className="text-xl font-semibold text-white">{title}</h2>
+      <p className="mt-2 text-sm leading-6 text-slate-400">{description}</p>
+    </div>
+    <button
+      type="button"
+      className={`mt-6 w-full rounded-md px-4 py-3 text-sm font-bold transition ${buttonClass}`}
+      onClick={onClick}
+    >
+      {buttonLabel}
+    </button>
+  </motion.div>
+);
 
 export default IdleScreen;

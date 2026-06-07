@@ -1,32 +1,34 @@
-import React, { useState, useEffect } from "react";
+import { Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const MatchingScreen = ({ onCancel }) => {
-  const [countdown, setCountdown] = useState(4);
+  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
-    if (countdown <= 0) return; // dừng khi đếm về 0
+    if (countdown <= 0) return;
 
     const timerId = setTimeout(() => {
-      setCountdown(countdown - 1);
+      setCountdown((current) => current - 1);
     }, 1000);
 
-    // cleanup mỗi lần effect chạy lại
     return () => clearTimeout(timerId);
   }, [countdown]);
 
   return (
-    <div className="text-center px-4">
-      <h1 className="text-3xl md:text-4xl font-light mb-4">
-        Đang tìm một người chơi ngẫu nhiên…
-      </h1>
-      <p className="text-lg md:text-xl mb-6">
-        <strong>{countdown > 0 ? countdown : "đã hết thời gian"}</strong> giây.
+    <div className="w-full max-w-md rounded-lg border border-white/10 bg-white/[0.04] p-6 text-center shadow-2xl shadow-black/20">
+      <Loader2 className="mx-auto h-9 w-9 animate-spin text-cyan-300" />
+      <h1 className="mt-5 text-2xl font-semibold text-white">Dang tim doi thu</h1>
+      <p className="mt-2 text-sm text-slate-400">
+        {countdown > 0
+          ? `Se tu dong huy sau ${countdown} giay neu chua co tran.`
+          : "Da het thoi gian cho."}
       </p>
       <button
-        className="px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-md text-white text-lg"
+        type="button"
+        className="mt-6 rounded-md border border-white/10 px-5 py-2 text-sm font-semibold text-slate-200 transition hover:border-red-400/60 hover:bg-red-500/10 hover:text-red-200"
         onClick={onCancel}
       >
-        Hủy
+        Huy tim tran
       </button>
     </div>
   );

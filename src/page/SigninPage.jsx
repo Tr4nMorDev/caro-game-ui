@@ -6,6 +6,7 @@ import { overlayVariants, formVariants } from "../untils/motion";
 import { useNavigate } from "react-router-dom";
 import { googleLogin, signin } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
+import BackgroundFirst from "../components/BackgroundFirst";
 const SigninPage = () => {
   const { user, isAuthenticated, logout, login } = useAuth();
   const navigate = useNavigate();
@@ -49,20 +50,26 @@ const SigninPage = () => {
 
   return (
     <>
+      <BackgroundFirst />
+
       <motion.div
-        className="fixed inset-0 bg-black backdrop-blur-sm z-10"
+        className="fixed inset-0 z-10 bg-black/25"
         variants={overlayVariants}
         initial="hidden"
         animate="visible"
       ></motion.div>
 
       <motion.div
-        className="fixed inset-0 flex items-center justify-center px-4 z-20"
+        className="fixed inset-0 z-20 flex items-center justify-center px-4"
+        onClick={() => navigate("/")}
         initial="hidden"
         animate="visible"
         variants={formVariants}
       >
-        <div className="bg-[#1f1f1f] p-8 rounded-2xl shadow-lg w-full max-w-md text-white">
+        <div
+          className="w-full max-w-md rounded-2xl border border-white/20 bg-slate-950/55 p-8 text-white shadow-2xl shadow-black/40 backdrop-blur-md"
+          onClick={(event) => event.stopPropagation()}
+        >
           <h2 className="text-3xl font-bold mb-6 text-center">Đăng nhập</h2>
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
@@ -72,7 +79,7 @@ const SigninPage = () => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Email"
-              className="px-4 py-2 rounded bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-600"
+              className="rounded border border-white/15 bg-white/10 px-4 py-2 text-white placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
             <input
               type="password"
@@ -80,7 +87,7 @@ const SigninPage = () => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Mật khẩu"
-              className="px-4 py-2 rounded bg-[#2a2a2a] border border-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-600"
+              className="rounded border border-white/15 bg-white/10 px-4 py-2 text-white placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
             />
             <button
               type="submit"
