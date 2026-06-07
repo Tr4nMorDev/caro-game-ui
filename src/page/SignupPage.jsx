@@ -48,9 +48,10 @@ const SignupPage = () => {
         variants={formVariants}
       >
         <div
-          className="w-full max-w-md rounded-2xl border border-white/20 bg-slate-950/55 p-8 text-white shadow-2xl shadow-black/40 backdrop-blur-md"
+          className="auth-warp-form w-full max-w-md rounded-2xl border border-white/20 bg-slate-950/55 p-8 text-white shadow-2xl shadow-black/40 backdrop-blur-md"
           onClick={(event) => event.stopPropagation()}
         >
+          <div className="auth-warp-content">
           <h2 className="text-3xl font-bold mb-6 text-center">
             Đăng ký tài khoản
           </h2>
@@ -97,6 +98,7 @@ const SignupPage = () => {
               Đăng nhập
             </Link>
           </p>
+          </div>
         </div>
       </motion.div>
     </>

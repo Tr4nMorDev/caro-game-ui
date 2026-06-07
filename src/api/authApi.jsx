@@ -84,6 +84,23 @@ export const signout = async (token) => {
   }
 };
 
+export const getCurrentUser = async (token) => {
+  const response = await fetch(`${API_BASE_URL}/api/user/me`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Lay thong tin user that bai");
+  }
+
+  return await response.json();
+};
+
 export const startMatchmaking = async (token) => {
   try {
     console.log("token :", token);
@@ -235,3 +252,21 @@ export const OutPlayWithAI = async (token) => {
       console.log(err.message)
   } 
 }
+
+export const updateAvatar = async (token, avatar, name) => {
+  const response = await fetch(`${API_BASE_URL}/api/user/avatar`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ avatar, name }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Cap nhat avatar that bai");
+  }
+
+  return await response.json();
+};

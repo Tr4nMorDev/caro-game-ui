@@ -1,10 +1,17 @@
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, UserRound, X } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signout } from "../api/authApi";
+import { signout, updateAvatar } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
 
+const chibiAvatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.png`);
+
 const Person = () => {
-  const { user, isAuthenticated, logout, token } = useAuth();
+  const { user, isAuthenticated, logout, token, updateUser } = useAuth();
+  const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
+  const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+  const [profileName, setProfileName] = useState("");
+  const [selectedAvatar, setSelectedAvatar] = useState("");
   const navigate = useNavigate();
 
   const handleLogout = async () => {
@@ -17,6 +24,27 @@ const Person = () => {
     } finally {
       logout();
       navigate("/");
+    }
+  };
+
+  const openAvatarPicker = () => {
+    setProfileName(user?.name || "");
+    setSelectedAvatar(user?.avatar || chibiAvatars[0]);
+    setIsAvatarPickerOpen(true);
+  };
+
+  const handleSaveProfile = async () => {
+    if (!token || isSavingAvatar) return;
+
+    try {
+      setIsSavingAvatar(true);
+      const result = await updateAvatar(token, selectedAvatar, profileName);
+      updateUser(result.user);
+      setIsAvatarPickerOpen(false);
+    } catch (error) {
+      console.error("Update profile error:", error.message);
+    } finally {
+      setIsSavingAvatar(false);
     }
   };
 
@@ -39,36 +67,122 @@ const Person = () => {
   }
 
   return (
-    <header className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 shadow-lg shadow-black/10">
-      <div className="flex min-w-0 items-center gap-3">
-        {user.avatar ? (
-          <img
-            src={user.avatar}
-            alt={user.name || "Player"}
-            className="h-11 w-11 rounded-md border border-white/20 object-cover"
-          />
-        ) : (
-          <div className="flex h-11 w-11 items-center justify-center rounded-md border border-white/20 bg-slate-800">
-            <UserRound className="h-5 w-5 text-slate-300" />
-          </div>
-        )}
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-white">
-            {user.name || user.email || "Player"}
-          </p>
-          <p className="text-xs text-slate-400">San sang vao tran</p>
-        </div>
-      </div>
+    <>
+      <header className="flex w-full flex-wrap items-center justify-between gap-3 rounded-lg border border-white/10 bg-white/5 px-4 py-3 shadow-lg shadow-black/10">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
+            onClick={openAvatarPicker}
+            className="group relative rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-300"
+            title="Doi anh dai dien"
+          >
+            {user.avatar ? (
+              <img
+                src={user.avatar}
+                alt={user.name || "Player"}
+                className="h-11 w-11 rounded-md border border-white/20 object-cover transition group-hover:border-fuchsia-300 group-hover:brightness-110"
+              />
+            ) : (
+              <div className="flex h-11 w-11 items-center justify-center rounded-md border border-white/20 bg-slate-800 transition group-hover:border-fuchsia-300">
+                <UserRound className="h-5 w-5 text-slate-300" />
+              </div>
+            )}
+            <span className="pointer-events-none absolute -bottom-1 -right-1 rounded bg-fuchsia-400 px-1.5 py-0.5 text-[10px] font-black text-slate-950 opacity-0 transition group-hover:opacity-100">
+              edit
+            </span>
+          </button>
 
-      <button
-        type="button"
-        onClick={handleLogout}
-        className="inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-slate-200 transition hover:border-red-400/60 hover:bg-red-500/10 hover:text-red-200"
-      >
-        <LogOut className="h-4 w-4" />
-        Dang xuat
-      </button>
-    </header>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold text-white">
+              {user.name || user.email || "Player"}
+            </p>
+            <p className="text-xs text-slate-400">San sang vao tran</p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="inline-flex items-center gap-2 rounded-md border border-white/10 px-3 py-2 text-sm font-medium text-slate-200 transition hover:border-red-400/60 hover:bg-red-500/10 hover:text-red-200"
+        >
+          <LogOut className="h-4 w-4" />
+          Dang xuat
+        </button>
+      </header>
+
+      {isAvatarPickerOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4 backdrop-blur-sm"
+          onClick={() => setIsAvatarPickerOpen(false)}
+        >
+          <div
+            className="w-full max-w-lg rounded-2xl border border-fuchsia-300/20 bg-slate-950/80 p-5 text-white shadow-2xl shadow-purple-950/40"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-black">Doi ho so</h2>
+                <p className="mt-1 text-sm text-slate-400">
+                  Doi ten hien thi va chon avatar chibi de luu vao tai khoan.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAvatarPickerOpen(false)}
+                className="rounded-lg border border-white/10 p-2 text-slate-300 transition hover:bg-white/10 hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <label className="mb-4 block">
+              <span className="mb-2 block text-sm font-bold text-slate-200">
+                Ten hien thi
+              </span>
+              <input
+                type="text"
+                value={profileName}
+                onChange={(event) => setProfileName(event.target.value)}
+                maxLength={32}
+                className="w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-300"
+                placeholder="Nhap ten hien thi"
+              />
+            </label>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+              {chibiAvatars.map((avatar) => (
+                <button
+                  key={avatar}
+                  type="button"
+                  disabled={isSavingAvatar}
+                  onClick={() => setSelectedAvatar(avatar)}
+                  className={`rounded-xl border p-2 transition hover:-translate-y-1 hover:border-fuchsia-300 hover:bg-white/10 disabled:cursor-wait disabled:opacity-70 ${
+                    selectedAvatar === avatar
+                      ? "border-fuchsia-300 bg-fuchsia-300/15"
+                      : "border-white/10 bg-white/5"
+                  }`}
+                >
+                  <img
+                    src={avatar}
+                    alt="Chibi avatar"
+                    className="aspect-square w-full rounded-lg object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              disabled={isSavingAvatar}
+              onClick={handleSaveProfile}
+              className="mt-4 w-full rounded-lg bg-fuchsia-300 px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-fuchsia-200 disabled:cursor-wait disabled:opacity-70"
+            >
+              {isSavingAvatar ? "Dang luu..." : "Luu thay doi"}
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };
 

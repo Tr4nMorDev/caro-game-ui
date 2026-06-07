@@ -114,6 +114,11 @@ const Caro = () => {
       socketRef.current.disconnect();
       socketRef.current = null;
     }
+    if (status === "IDLE" && aiSocketRef.current) {
+      console.log("🧹 Disconnecting AI socket");
+      aiSocketRef.current.disconnect();
+      aiSocketRef.current = null;
+    }
   }, [status]);
 
   const handleFindMatch = async () => {

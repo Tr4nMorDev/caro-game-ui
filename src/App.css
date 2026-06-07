@@ -3,6 +3,121 @@ body {
   @apply bg-[#030014] overflow-x-hidden text-white font-sans min-h-screen w-full;
 }
 
+.auth-warp-form {
+  position: relative;
+  transform-origin: center center;
+  animation: auth-warp-open 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-warp-form::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    circle,
+    rgba(165, 118, 255, 0.45),
+    rgba(34, 211, 238, 0.16) 42%,
+    transparent 72%
+  );
+  opacity: 0;
+  animation: auth-warp-glow 680ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.auth-warp-content {
+  animation: auth-content-in 360ms ease-out 360ms both;
+}
+
+@keyframes auth-warp-open {
+  0% {
+    opacity: 0.85;
+    transform: scale(0.035);
+    border-radius: 999px;
+    filter: blur(1px);
+  }
+  48% {
+    opacity: 1;
+    transform: scale(1.035);
+    border-radius: 28px;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    border-radius: 16px;
+    filter: blur(0);
+  }
+}
+
+@keyframes auth-warp-glow {
+  0% {
+    opacity: 1;
+    transform: scale(0.25);
+  }
+  55% {
+    opacity: 0.85;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.18);
+  }
+}
+
+@keyframes auth-content-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.matching-avatar-track {
+  animation: matching-avatar-marquee 18s linear infinite;
+}
+
+.matching-clock::before,
+.matching-clock::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  pointer-events: none;
+}
+
+.matching-clock::before {
+  inset: 0;
+  border-top-color: rgba(96, 165, 250, 0.95);
+  border-right-color: rgba(96, 165, 250, 0.35);
+  animation: matching-spin 2.8s linear infinite;
+}
+
+.matching-clock::after {
+  inset: 18px;
+  border-left-color: rgba(34, 211, 238, 0.75);
+  border-bottom-color: rgba(34, 211, 238, 0.3);
+  animation: matching-spin 3.8s linear infinite reverse;
+}
+
+@keyframes matching-avatar-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-33.333%);
+  }
+}
+
+@keyframes matching-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .shadow-top::before {
   content: "";
   position: absolute;

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getCurrentUser } from "../api/authApi";
 
 const AuthContext = createContext();
 
@@ -13,18 +14,32 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(() => sessionStorage.getItem("token"));
 
   useEffect(() => {
-    if (token && !user) {
-      try {
-        const parsedUser = parseJwt(token);
-        if (parsedUser) {
-          setUser(parsedUser);
-          sessionStorage.setItem("user", JSON.stringify(parsedUser));
-        }
-      } catch (e) {
-        console.error("Failed to parse token", e);
-        logout();
-      }
+    if (!token) {
+      return;
     }
+
+    let isActive = true;
+
+    const refreshCurrentUser = async () => {
+      try {
+        const data = await getCurrentUser(token);
+        if (!isActive) return;
+
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
+      } catch (e) {
+        console.error("Failed to refresh user profile", e);
+        if (isActive) {
+          logout();
+        }
+      }
+    };
+
+    refreshCurrentUser();
+
+    return () => {
+      isActive = false;
+    };
   }, [token]);
 
   const login = ({ token, user }) => {
@@ -42,12 +57,18 @@ export const AuthProvider = ({ children }) => {
     navigate("/");
   };
 
+  const updateUser = (nextUser) => {
+    sessionStorage.setItem("user", JSON.stringify(nextUser));
+    setUser(nextUser);
+  };
+
   const value = {
     user,
     token,
     isAuthenticated: !!user,
     login,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -56,20 +77,3 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => {
   return useContext(AuthContext);
 };
-
-function parseJwt(token) {
-  try {
-    const base64Url = token.split(".")[1];
-    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split("")
-        .map((c) => `%${("00" + c.charCodeAt(0).toString(16)).slice(-2)}`)
-        .join("")
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    console.error("JWT parsing error:", e);
-    return null;
-  }
-}
