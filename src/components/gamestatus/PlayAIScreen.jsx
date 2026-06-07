@@ -100,11 +100,11 @@ const PlayAIScreen = ({ onReplay, socket, data }) => {
       </div>
 
       <div
-        className="overflow-hidden rounded-lg border border-slate-700 bg-white shadow-2xl shadow-black/30"
+        className="caro-board-shell"
         style={{ width: "min(92vw, 600px)" }}
       >
         <div
-          className="grid aspect-square"
+          className="caro-board-grid"
           style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
         >
           {board.map((cell, index) => (
@@ -112,11 +112,11 @@ const PlayAIScreen = ({ onReplay, socket, data }) => {
               key={index}
               type="button"
               onClick={() => handleClick(index)}
-              className="aspect-square border border-slate-300 text-center text-sm font-bold leading-none transition hover:bg-cyan-50 disabled:cursor-not-allowed sm:text-base"
+              className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
               disabled={Boolean(cell) || gameOver || currentTurn !== "X"}
             >
-              {cell === "X" && <span className="text-red-600">X</span>}
-              {cell === "O" && <span className="text-blue-600">O</span>}
+              {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
+              {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
             </button>
           ))}
         </div>

@@ -80,6 +80,126 @@ body {
   animation: matching-avatar-marquee 18s linear infinite;
 }
 
+.caro-board-shell {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(circle at top, rgba(147, 51, 234, 0.2), transparent 46%),
+    rgba(255, 255, 255, 0.045);
+  box-shadow:
+    0 0 42px rgba(168, 85, 247, 0.32),
+    0 0 22px rgba(34, 211, 238, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+}
+
+.caro-board-shell::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  pointer-events: none;
+  background: conic-gradient(
+    from 120deg,
+    transparent,
+    rgba(34, 211, 238, 0.15),
+    transparent,
+    rgba(255, 0, 204, 0.18),
+    transparent
+  );
+  opacity: 0.55;
+  animation: caro-board-aurora 12s linear infinite;
+}
+
+.caro-board-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  aspect-ratio: 1;
+  gap: clamp(1px, 0.28vw, 3px);
+  padding: clamp(8px, 1.7vw, 15px);
+}
+
+.caro-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: clamp(4px, 0.7vw, 12px);
+  background: rgba(255, 255, 255, 0.075);
+  color: white;
+  cursor: pointer;
+  font-size: clamp(0.72rem, 2.1vw, 1.45rem);
+  font-weight: 900;
+  line-height: 1;
+  transition:
+    transform 0.22s ease,
+    background 0.22s ease,
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.caro-cell:not(:disabled):hover {
+  z-index: 2;
+  transform: scale(1.12);
+  border-color: rgba(34, 211, 238, 0.85);
+  background: rgba(34, 211, 238, 0.2);
+  box-shadow: 0 0 16px rgba(34, 211, 238, 0.9);
+}
+
+.caro-cell:disabled {
+  cursor: not-allowed;
+}
+
+.caro-cell-filled {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.caro-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(0);
+  animation: caro-mark-pop 0.28s ease-out forwards;
+  text-shadow: 0 0 14px currentColor;
+}
+
+.caro-mark-x {
+  color: #ff4fd8;
+}
+
+.caro-mark-o {
+  color: #22d3ee;
+}
+
+@keyframes caro-mark-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.25) rotate(-8deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.18) rotate(2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes caro-board-aurora {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .matching-clock::before,
 .matching-clock::after {
   content: "";
