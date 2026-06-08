@@ -43,6 +43,35 @@ export const googleLogin = async (idToken) => {
   }
 };
 
+export const trackGoogleLogin = async (token, payload) => {
+  console.log("[google-login-tracking] sending", {
+    endpoint: `${API_BASE_URL}/api/tracking/google-login`,
+    payload,
+    hasToken: Boolean(token),
+  });
+
+  const response = await fetch(`${API_BASE_URL}/api/tracking/google-login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  console.log("[google-login-tracking] response", {
+    status: response.status,
+    ok: response.ok,
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Track Google login that bai");
+  }
+
+  return await response.json();
+};
+
 export const signin = async (formData) => {
   try {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {

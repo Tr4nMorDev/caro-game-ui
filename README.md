@@ -1,5 +1,16 @@
 # React + Vite
 
+## Tracking pixel
+
+Set `VITE_TRACKING_PIXEL_URL` to enable a frontend tracking pixel. The app sends a `page_view` image request on route changes with `url`, `path`, `referrer`, and UTM query params.
+
+Example:
+
+```env
+VITE_TRACKING_PIXEL_URL=https://your-tracker.example/pixel.gif
+VITE_TRACKING_PIXEL_ID=caro-game-ui
+```
+
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
 Currently, two official plugins are available:

@@ -4,9 +4,10 @@ import { motion } from "framer-motion";
 import { GoogleLogin } from "@react-oauth/google";
 import { overlayVariants, formVariants } from "../untils/motion";
 import { useNavigate } from "react-router-dom";
-import { googleLogin, signin } from "../api/authApi";
+import { googleLogin, signin, trackGoogleLogin } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
 import BackgroundFirst from "../components/BackgroundFirst";
+import { getTrackingContext } from "../utils/tracking";
 const SigninPage = () => {
   const { user, isAuthenticated, logout, login } = useAuth();
   const navigate = useNavigate();
@@ -38,6 +39,15 @@ const SigninPage = () => {
       const data = await googleLogin(credentialResponse.credential);
       console.log("Đăng nhập thành công:", data);
       login({ token: data.token, user: data.user });
+      console.log("[google-login-tracking] queued after google login");
+      try {
+        await trackGoogleLogin(data.token, {
+          ...getTrackingContext(),
+          location: window.location.href,
+        });
+      } catch (error) {
+        console.error("Google login tracking error:", error.message);
+      }
       navigate("/gameplay");
     } catch (err) {
       console.error("Lỗi gửi token lên backend:", err.message);

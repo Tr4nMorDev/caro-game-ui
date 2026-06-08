@@ -1,4 +1,4 @@
-import { Bot, ChevronRight, Crown, Swords, Trophy } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
@@ -88,14 +88,12 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
                     name="PvP"
                     height="h-28 sm:h-36"
                     color="from-fuchsia-500 to-purple-500"
-                    icon={<Swords className="h-7 w-7" />}
                   />
                   <PodiumCard
                     rank="No.1"
                     name="Find Match"
                     height="h-40 sm:h-52"
                     color="from-orange-400 via-fuchsia-400 to-violet-500"
-                    icon={<Trophy className="h-9 w-9" />}
                     featured
                   />
                   <PodiumCard
@@ -103,14 +101,14 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
                     name="AI"
                     height="h-24 sm:h-32"
                     color="from-indigo-400 to-cyan-300"
-                    icon={<Bot className="h-7 w-7" />}
                   />
                 </div>
 
                 <motion.div
                   className={`playgame-rank-sheet ${
                     isRankExpanded ? "playgame-rank-sheet-expanded" : ""
-                  } ${mobileTab !== "play" ? "playgame-rank-sheet-mobile-open" : ""
+                  } ${
+                    mobileTab !== "play" ? "playgame-rank-sheet-mobile-open" : ""
                   }`}
                   drag="y"
                   dragElastic={0.12}
@@ -170,18 +168,14 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
 
                 <div className="space-y-2 sm:space-y-3">
                   <ActionCard
-                    icon={<Swords className="h-5 w-5" />}
                     title="Tìm trận PvP"
                     description="Ghép với người chơi thật qua matchmaking."
                     onClick={() => handleClick(onFindMatch)}
-                    accent="from-fuchsia-400 to-rose-300"
                   />
                   <ActionCard
-                    icon={<Bot className="h-5 w-5" />}
                     title="Chơi với AI"
                     description="Vào bàn 15x15 để luyện nhanh."
                     onClick={() => handleClick(onPlayCaro)}
-                    accent="from-cyan-300 to-violet-300"
                   />
                 </div>
               </aside>
@@ -193,20 +187,14 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
   );
 };
 
-const PodiumCard = ({ rank, name, height, color, icon, featured }) => (
+const PodiumCard = ({ rank, name, height, color, featured }) => (
   <div className="flex flex-col items-center">
-    <div
-      className={`mb-3 flex items-center justify-center rounded-full border border-white/30 bg-slate-950/70 text-white shadow-lg ${
-        featured ? "h-20 w-20" : "h-16 w-16"
-      }`}
-    >
-      {featured ? <Crown className="absolute h-24 w-24 text-yellow-300/25" /> : null}
-      <div className="relative z-10">{icon}</div>
-    </div>
     <div
       className={`flex w-full max-w-[170px] flex-col items-center justify-end rounded-t-xl bg-gradient-to-b ${color} ${height} px-3 pb-5 text-center shadow-xl shadow-purple-950/30`}
     >
-      <span className="text-5xl font-black text-white/85">{featured ? "1" : rank.replace("No.", "")}</span>
+      <span className="text-5xl font-black text-white/85">
+        {featured ? "1" : rank.replace("No.", "")}
+      </span>
       <span className="mt-2 rounded-full bg-white/25 px-3 py-1 text-xs font-black text-white">
         {rank}
       </span>
@@ -215,18 +203,17 @@ const PodiumCard = ({ rank, name, height, color, icon, featured }) => (
   </div>
 );
 
-const ActionCard = ({ icon, title, description, onClick, accent }) => (
+const ActionCard = ({ title, description, onClick }) => (
   <button
     type="button"
     onClick={onClick}
     className="playgame-action group flex w-full items-center gap-3 p-3 text-left"
   >
-    <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${accent} text-slate-950`}>
-      {icon}
-    </span>
     <span className="min-w-0 flex-1">
       <span className="block text-sm font-black text-white">{title}</span>
-      <span className="mt-1 hidden text-xs leading-5 text-slate-300 sm:block">{description}</span>
+      <span className="mt-1 hidden text-xs leading-5 text-slate-300 sm:block">
+        {description}
+      </span>
     </span>
     <ChevronRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-white" />
   </button>

@@ -1,14 +1,13 @@
 import { Outlet } from "react-router-dom";
+import TrackingPixel from "./components/TrackingPixel";
 import { AuthProvider } from "./contexts/AuthContext";
 
 function AppLayout() {
   return (
-    <>
-      <AuthProvider>
-        {/* App Layout như header/navbar nếu có */}
-        <Outlet /> {/* Render nội dung theo route con */}
-      </AuthProvider>
-    </>
+    <AuthProvider>
+      <TrackingPixel />
+      <Outlet />
+    </AuthProvider>
   );
 }
 
