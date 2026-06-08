@@ -1,6 +1,6 @@
 const GameEnd = ({ isWinner, onReplay }) => {
   return (
-    <div className="w-full max-w-md rounded-lg border border-white/10 bg-white/[0.04] p-6 text-center shadow-2xl shadow-black/20">
+    <div className="playgame-glass w-full max-w-md p-6 text-center">
       <h2
         className={`text-2xl font-bold ${
           isWinner ? "text-emerald-300" : "text-red-300"
@@ -14,7 +14,7 @@ const GameEnd = ({ isWinner, onReplay }) => {
       <button
         type="button"
         onClick={onReplay}
-        className="mt-6 rounded-md bg-cyan-500 px-5 py-2 text-sm font-bold text-slate-950 transition hover:bg-cyan-400"
+        className="playgame-primary-button mt-6"
       >
         Quay lai
       </button>

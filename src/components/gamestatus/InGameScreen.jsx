@@ -67,8 +67,8 @@ const InGameScreen = ({
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-4">
-      <div className="grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+    <div className="playgame-board-screen flex w-full flex-col items-center justify-center gap-2 sm:gap-3">
+      <div className="grid w-full max-w-3xl grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-3">
         <PlayerPanel
           player={you}
           symbol={youAre}
@@ -89,8 +89,7 @@ const InGameScreen = ({
       </div>
 
       <div
-        className="caro-board-shell"
-        style={{ width: "min(92vw, 640px)" }}
+        className="caro-board-shell playgame-board-wrap"
       >
         <div
           className="caro-board-grid"
@@ -113,7 +112,7 @@ const InGameScreen = ({
 
       <button
         type="button"
-        className="rounded-md border border-red-400/40 px-5 py-2 text-sm font-semibold text-red-200 transition hover:bg-red-500/10"
+        className="playgame-danger-button"
         onClick={onExitGame}
       >
         Thoat tran
@@ -124,17 +123,15 @@ const InGameScreen = ({
 
 const PlayerPanel = ({ player, symbol, timer, active, align }) => (
   <div
-    className={`flex items-center gap-3 rounded-lg border px-3 py-2 ${
-      active
-        ? "border-emerald-400/70 bg-emerald-400/10"
-        : "border-white/10 bg-white/[0.04]"
+    className={`playgame-player-panel flex items-center gap-3 px-3 py-2 ${
+      active ? "playgame-player-panel-active" : ""
     } ${align === "right" ? "sm:justify-end" : ""}`}
   >
     {align === "right" && <SymbolBadge symbol={symbol} />}
     <img
       src={player?.avatar}
       alt={player?.name || "Player"}
-      className="h-10 w-10 rounded-md border border-white/20 object-cover"
+      className="h-10 w-10 rounded-md border border-fuchsia-200/25 object-cover shadow-lg shadow-purple-950/20"
     />
     <div className={`min-w-0 ${align === "right" ? "sm:text-right" : ""}`}>
       <p className="truncate text-sm font-semibold text-white">
@@ -151,9 +148,7 @@ const PlayerPanel = ({ player, symbol, timer, active, align }) => (
 const SymbolBadge = ({ symbol }) => (
   <span
     className={`flex h-8 w-8 items-center justify-center rounded-md text-sm font-black ${
-      symbol === "X"
-        ? "bg-red-500/15 text-red-300"
-        : "bg-blue-500/15 text-blue-300"
+      symbol === "X" ? "playgame-symbol-x" : "playgame-symbol-o"
     }`}
   >
     {symbol}

@@ -1,6 +1,498 @@
 @import "tailwindcss";
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
 body {
-  @apply bg-[#030014] overflow-x-hidden text-white font-sans min-h-screen w-full;
+  @apply bg-[#030014] text-white font-sans w-full;
+}
+
+.playgame-page {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  color: white;
+  background:
+    radial-gradient(circle at top, rgba(88, 28, 135, 0.5), transparent 38%),
+    radial-gradient(circle at 72% 42%, rgba(34, 211, 238, 0.16), transparent 30%),
+    linear-gradient(135deg, #050510 0%, #09031d 48%, #030014 100%);
+}
+
+.playgame-page::before,
+.playgame-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.playgame-page::before {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.playgame-page::after {
+  background:
+    radial-gradient(circle at 18% 18%, rgba(255, 0, 204, 0.13), transparent 24%),
+    radial-gradient(circle at 82% 26%, rgba(34, 211, 238, 0.11), transparent 22%),
+    radial-gradient(circle at 50% 90%, rgba(168, 85, 247, 0.17), transparent 32%);
+  filter: blur(2px);
+}
+
+.playgame-glass {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(216, 180, 254, 0.24);
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.72), rgba(9, 3, 29, 0.7)),
+    radial-gradient(circle at top left, rgba(217, 70, 239, 0.2), transparent 34%);
+  box-shadow:
+    0 0 44px rgba(168, 85, 247, 0.28),
+    0 24px 70px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+}
+
+.playgame-glass::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(110deg, transparent, rgba(34, 211, 238, 0.12), transparent 38%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 28%);
+}
+
+.playgame-card {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 20px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    radial-gradient(circle at top, rgba(168, 85, 247, 0.12), transparent 42%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 16px 42px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(14px);
+}
+
+.playgame-tab {
+  border: 1px solid rgba(216, 180, 254, 0.25);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(226, 232, 240, 0.86);
+}
+
+.playgame-tab-active {
+  background: linear-gradient(45deg, rgba(34, 211, 238, 0.95), rgba(255, 0, 204, 0.9));
+  color: white;
+  box-shadow: 0 0 18px rgba(255, 0, 204, 0.35);
+}
+
+.playgame-action {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(216, 180, 254, 0.18);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045)),
+    radial-gradient(circle at left, rgba(34, 211, 238, 0.11), transparent 42%);
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+.playgame-action:hover {
+  transform: translateY(-2px) scale(1.01);
+  border-color: rgba(34, 211, 238, 0.62);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.065)),
+    radial-gradient(circle at left, rgba(255, 0, 204, 0.18), transparent 46%);
+  box-shadow:
+    0 0 18px rgba(34, 211, 238, 0.22),
+    0 0 28px rgba(255, 0, 204, 0.18);
+}
+
+.playgame-primary-button,
+.playgame-danger-button {
+  border-radius: 999px;
+  padding: 0.65rem 1.35rem;
+  font-size: 0.875rem;
+  font-weight: 800;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background 0.22s ease;
+}
+
+.playgame-primary-button {
+  border: 1px solid rgba(34, 211, 238, 0.45);
+  background: linear-gradient(45deg, rgba(34, 211, 238, 0.92), rgba(255, 0, 204, 0.82));
+  color: white;
+  box-shadow: 0 0 18px rgba(34, 211, 238, 0.24);
+}
+
+.playgame-danger-button {
+  border: 1px solid rgba(248, 113, 113, 0.38);
+  background: rgba(127, 29, 29, 0.16);
+  color: rgb(254, 202, 202);
+}
+
+.playgame-primary-button:hover,
+.playgame-danger-button:hover {
+  transform: scale(1.05);
+}
+
+.playgame-primary-button:hover {
+  box-shadow: 0 0 22px rgba(255, 0, 204, 0.36);
+}
+
+.playgame-danger-button:hover {
+  border-color: rgba(248, 113, 113, 0.72);
+  background: rgba(239, 68, 68, 0.18);
+  box-shadow: 0 0 18px rgba(248, 113, 113, 0.2);
+}
+
+.playgame-player-panel {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.055);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.playgame-player-panel-active {
+  border-color: rgba(34, 211, 238, 0.7);
+  background: rgba(34, 211, 238, 0.1);
+  box-shadow:
+    0 0 18px rgba(34, 211, 238, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.playgame-symbol-x,
+.playgame-symbol-o {
+  box-shadow: 0 0 14px currentColor;
+}
+
+.playgame-symbol-x {
+  background: rgba(255, 0, 204, 0.14);
+  color: #ff4fd8;
+}
+
+.playgame-symbol-o {
+  background: rgba(34, 211, 238, 0.14);
+  color: #22d3ee;
+}
+
+.playgame-lobby-panel {
+  max-height: calc(100dvh - 104px);
+}
+
+.playgame-lobby-content {
+  height: clamp(430px, calc(100dvh - 218px), 540px);
+  min-height: 0;
+}
+
+.playgame-podium {
+  min-height: 0;
+  height: clamp(210px, calc(100dvh - 420px), 285px);
+}
+
+.playgame-rank-sheet {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  z-index: 8;
+  height: min(168px, 42%);
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background:
+    linear-gradient(145deg, rgba(15, 23, 42, 0.88), rgba(49, 12, 74, 0.72)),
+    radial-gradient(circle at top right, rgba(34, 211, 238, 0.16), transparent 42%);
+  box-shadow:
+    0 -14px 44px rgba(168, 85, 247, 0.22),
+    0 18px 42px rgba(0, 0, 0, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(18px);
+  transition:
+    height 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.playgame-rank-sheet:active {
+  cursor: grabbing;
+}
+
+.playgame-rank-sheet-expanded {
+  height: calc(100% - 1.5rem);
+  border-color: rgba(34, 211, 238, 0.34);
+  box-shadow:
+    0 -20px 60px rgba(168, 85, 247, 0.32),
+    0 0 26px rgba(34, 211, 238, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+
+.playgame-rank-list {
+  max-height: calc(100% - 42px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.playgame-rank-list::-webkit-scrollbar {
+  display: none;
+}
+
+.playgame-screen-fit {
+  height: 100%;
+  min-height: 0;
+}
+
+.playgame-board-screen {
+  height: 100%;
+  min-height: 0;
+}
+
+.playgame-board-wrap {
+  width: min(92vw, calc(100dvh - 192px), 640px);
+}
+
+.playgame-board-wrap-ai {
+  width: min(92vw, calc(100dvh - 204px), 600px);
+}
+
+.playgame-player-panel {
+  min-height: 56px;
+}
+
+@media (max-height: 820px) {
+  .playgame-glass {
+    border-radius: 20px;
+  }
+
+  .playgame-lobby-panel {
+    padding: 0.85rem;
+  }
+
+  .playgame-player-panel {
+    min-height: 48px;
+  }
+
+  .playgame-primary-button,
+  .playgame-danger-button {
+    padding: 0.5rem 1.05rem;
+  }
+
+  .caro-board-shell {
+    border-radius: 18px;
+  }
+}
+
+@media (max-height: 720px) {
+  .playgame-lobby-content {
+    height: calc(100dvh - 188px);
+  }
+
+  .playgame-podium {
+    height: calc(100dvh - 360px);
+  }
+
+  .caro-board-grid {
+    padding: clamp(5px, 1.1vw, 10px);
+  }
+
+  .caro-cell {
+    border-radius: clamp(2px, 0.42vw, 7px);
+  }
+}
+
+@media (max-width: 640px) {
+  .playgame-page {
+    height: 100svh;
+  }
+
+  .playgame-glass {
+    border-radius: 18px;
+    box-shadow:
+      0 0 26px rgba(168, 85, 247, 0.28),
+      0 14px 42px rgba(0, 0, 0, 0.32),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+
+  .playgame-card {
+    border-radius: 16px;
+  }
+
+  .playgame-profile-bar {
+    gap: 0.55rem;
+    padding: 0.55rem 0.7rem;
+  }
+
+  .playgame-profile-bar img,
+  .playgame-profile-bar button > div:first-child {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.6rem;
+  }
+
+  .playgame-profile-bar p:first-child {
+    font-size: 0.78rem;
+  }
+
+  .playgame-profile-bar p:last-child {
+    font-size: 0.65rem;
+  }
+
+  .playgame-lobby-panel {
+    height: calc(100svh - 78px);
+    max-height: none;
+    padding: 0.7rem;
+  }
+
+  .playgame-lobby-content {
+    height: calc(100% - 68px);
+    gap: 0.6rem;
+  }
+
+  .playgame-podium {
+    display: none;
+  }
+
+  .playgame-rank-sheet {
+    left: 0.55rem;
+    right: 0.55rem;
+    bottom: 0.55rem;
+    height: min(148px, 44%);
+    border-radius: 15px;
+  }
+
+  .playgame-rank-sheet-expanded {
+    height: calc(100% - 1.1rem);
+  }
+
+  .playgame-rank-sheet-mobile-open {
+    height: calc(100% - 1.1rem);
+  }
+
+  .playgame-tab {
+    border-radius: 10px;
+  }
+
+  .playgame-action {
+    border-radius: 14px;
+  }
+
+  .playgame-action > span:first-child {
+    width: 2.2rem;
+    height: 2.2rem;
+    border-radius: 0.7rem;
+  }
+
+  .playgame-primary-button,
+  .playgame-danger-button {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.75rem;
+  }
+
+  .playgame-player-panel {
+    min-height: 44px;
+    gap: 0.45rem;
+    padding: 0.45rem;
+    border-radius: 12px;
+  }
+
+  .playgame-player-panel img,
+  .playgame-player-icon {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.55rem;
+  }
+
+  .playgame-player-panel p:first-child {
+    max-width: 5.2rem;
+    font-size: 0.75rem;
+  }
+
+  .playgame-player-panel p:last-child {
+    font-size: 0.65rem;
+  }
+
+  .playgame-symbol-x,
+  .playgame-symbol-o {
+    width: 1.65rem;
+    height: 1.65rem;
+    border-radius: 0.45rem;
+    font-size: 0.75rem;
+  }
+
+  .playgame-board-screen {
+    gap: 0.45rem;
+  }
+
+  .playgame-board-wrap {
+    width: min(96vw, calc(100svh - 168px), 430px);
+  }
+
+  .playgame-board-wrap-ai {
+    width: min(96vw, calc(100svh - 180px), 430px);
+  }
+
+  .caro-board-shell {
+    border-radius: 15px;
+    box-shadow:
+      0 0 24px rgba(168, 85, 247, 0.42),
+      0 0 14px rgba(34, 211, 238, 0.16),
+      inset 0 1px 0 rgba(255, 255, 255, 0.14);
+  }
+
+  .caro-board-grid {
+    gap: 1px;
+    padding: 6px;
+  }
+
+  .caro-cell {
+    border-radius: 3px;
+    font-size: clamp(0.55rem, 3.4vw, 1rem);
+  }
+
+  .matching-avatar-track {
+    animation-duration: 14s;
+  }
+}
+
+@media (max-width: 420px) {
+  .playgame-lobby-panel {
+    height: calc(100svh - 72px);
+    padding: 0.55rem;
+  }
+
+  .playgame-lobby-content {
+    height: calc(100% - 62px);
+  }
+
+  .playgame-board-wrap {
+    width: min(96vw, calc(100svh - 154px));
+  }
+
+  .playgame-board-wrap-ai {
+    width: min(96vw, calc(100svh - 166px));
+  }
 }
 
 .auth-warp-form {
@@ -82,23 +574,25 @@ body {
 
 .caro-board-shell {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   border-radius: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.45);
   background:
-    radial-gradient(circle at top, rgba(147, 51, 234, 0.2), transparent 46%),
-    rgba(255, 255, 255, 0.045);
+    radial-gradient(circle at top, rgba(168, 85, 247, 0.28), transparent 48%),
+    linear-gradient(145deg, rgba(16, 8, 38, 0.96), rgba(5, 9, 28, 0.94));
   box-shadow:
-    0 0 42px rgba(168, 85, 247, 0.32),
-    0 0 22px rgba(34, 211, 238, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px);
+    0 0 46px rgba(168, 85, 247, 0.5),
+    0 0 28px rgba(34, 211, 238, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(12px);
 }
 
 .caro-board-shell::before {
   content: "";
   position: absolute;
   inset: -35%;
+  z-index: -1;
   pointer-events: none;
   background: conic-gradient(
     from 120deg,
@@ -108,13 +602,13 @@ body {
     rgba(255, 0, 204, 0.18),
     transparent
   );
-  opacity: 0.55;
+  opacity: 0.42;
   animation: caro-board-aurora 12s linear infinite;
 }
 
 .caro-board-grid {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   aspect-ratio: 1;
   gap: clamp(1px, 0.28vw, 3px);
@@ -128,9 +622,9 @@ body {
   justify-content: center;
   aspect-ratio: 1;
   min-width: 0;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  border-radius: clamp(4px, 0.7vw, 12px);
-  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(148, 163, 184, 0.32);
+  border-radius: clamp(3px, 0.52vw, 10px);
+  background: rgba(15, 23, 42, 0.74);
   color: white;
   cursor: pointer;
   font-size: clamp(0.72rem, 2.1vw, 1.45rem);
@@ -145,18 +639,20 @@ body {
 
 .caro-cell:not(:disabled):hover {
   z-index: 2;
-  transform: scale(1.12);
+  transform: scale(1.08);
   border-color: rgba(34, 211, 238, 0.85);
-  background: rgba(34, 211, 238, 0.2);
+  background: rgba(34, 211, 238, 0.24);
   box-shadow: 0 0 16px rgba(34, 211, 238, 0.9);
 }
 
 .caro-cell:disabled {
   cursor: not-allowed;
+  opacity: 1;
 }
 
 .caro-cell-filled {
-  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(30, 41, 59, 0.88);
 }
 
 .caro-mark {
@@ -211,15 +707,15 @@ body {
 
 .matching-clock::before {
   inset: 0;
-  border-top-color: rgba(96, 165, 250, 0.95);
-  border-right-color: rgba(96, 165, 250, 0.35);
+  border-top-color: rgba(34, 211, 238, 0.95);
+  border-right-color: rgba(34, 211, 238, 0.35);
   animation: matching-spin 2.8s linear infinite;
 }
 
 .matching-clock::after {
   inset: 18px;
-  border-left-color: rgba(34, 211, 238, 0.75);
-  border-bottom-color: rgba(34, 211, 238, 0.3);
+  border-left-color: rgba(255, 0, 204, 0.75);
+  border-bottom-color: rgba(255, 0, 204, 0.3);
   animation: matching-spin 3.8s linear infinite reverse;
 }
 

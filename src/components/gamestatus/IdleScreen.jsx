@@ -10,6 +10,8 @@ const leaderboardRows = [
 
 const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
   const [isVisible, setIsVisible] = useState(true);
+  const [isRankExpanded, setIsRankExpanded] = useState(false);
+  const [mobileTab, setMobileTab] = useState("play");
 
   const handleClick = async (action) => {
     await action();
@@ -17,57 +19,81 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
   };
 
   return (
-    <div className="flex w-full justify-center">
+    <div className="flex h-full min-h-0 w-full justify-center">
       <AnimatePresence>
         {isVisible && (
           <motion.div
-            className="w-full max-w-6xl overflow-hidden rounded-2xl border border-fuchsia-300/20 bg-slate-950/45 p-4 shadow-2xl shadow-purple-950/40 backdrop-blur-xl sm:p-5 lg:p-6"
+            className="playgame-glass playgame-lobby-panel w-full max-w-6xl p-3 sm:p-4"
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.25 }}
           >
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.28em] text-fuchsia-200/70">
                   Caro Match Hub
                 </p>
-                <h1 className="mt-2 text-3xl font-black text-white sm:text-4xl">
+                <h1 className="mt-1 text-2xl font-black text-white sm:text-3xl">
                   Leaderboard
                 </h1>
               </div>
 
               <div className="flex rounded-lg border border-fuchsia-300/25 bg-white/5 p-1 text-sm font-bold text-white">
-                <span className="rounded-md px-5 py-2 text-slate-300">Home</span>
-                <span className="rounded-md bg-fuchsia-300 px-5 py-2 text-slate-950 shadow-lg shadow-fuchsia-900/30">
+                <button
+                  type="button"
+                  onClick={() => setMobileTab("play")}
+                  className={`playgame-tab px-5 py-2 ${
+                    mobileTab === "play" ? "playgame-tab-active" : ""
+                  }`}
+                >
                   Play
-                </span>
-                <span className="rounded-md px-5 py-2 text-slate-300">Rank</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileTab("weekly");
+                    setIsRankExpanded(true);
+                  }}
+                  className={`playgame-tab mx-1 px-5 py-2 ${
+                    mobileTab === "weekly" ? "playgame-tab-active" : ""
+                  }`}
+                >
+                  Weekly
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileTab("monthly");
+                    setIsRankExpanded(true);
+                  }}
+                  className={`playgame-tab px-5 py-2 ${
+                    mobileTab === "monthly" ? "playgame-tab-active" : ""
+                  }`}
+                >
+                  Monthly
+                </button>
               </div>
             </div>
 
-            <div className="grid gap-5 lg:grid-cols-[1fr_310px]">
-              <section className="min-h-[520px] rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:p-5">
-                <div className="mb-5 flex w-fit rounded-lg border border-white/10 bg-white/10 p-1 text-xs font-bold">
-                  <span className="rounded-md bg-gradient-to-r from-fuchsia-400 to-rose-300 px-5 py-2 text-white">
-                    Weekly
-                  </span>
-                  <span className="px-5 py-2 text-slate-300">Monthly</span>
-                  <span className="px-5 py-2 text-slate-300">All-Time</span>
-                </div>
-
-                <div className="grid min-h-[270px] grid-cols-3 items-end gap-3 px-1 sm:px-8">
+            <div className="playgame-lobby-content grid min-h-0 gap-3 sm:gap-4 lg:grid-cols-[1fr_300px]">
+              <section
+                className={`playgame-card relative order-2 min-h-0 flex-col overflow-hidden p-3 sm:p-4 lg:order-1 lg:flex ${
+                  mobileTab === "play" ? "hidden" : "flex"
+                }`}
+              >
+                <div className="playgame-podium grid grid-cols-3 items-end gap-3 px-1 sm:px-6">
                   <PodiumCard
                     rank="No.2"
                     name="PvP"
-                    height="h-36 sm:h-44"
+                    height="h-28 sm:h-36"
                     color="from-fuchsia-500 to-purple-500"
                     icon={<Swords className="h-7 w-7" />}
                   />
                   <PodiumCard
                     rank="No.1"
                     name="Find Match"
-                    height="h-52 sm:h-64"
+                    height="h-40 sm:h-52"
                     color="from-orange-400 via-fuchsia-400 to-violet-500"
                     icon={<Trophy className="h-9 w-9" />}
                     featured
@@ -75,18 +101,32 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
                   <PodiumCard
                     rank="No.3"
                     name="AI"
-                    height="h-28 sm:h-36"
+                    height="h-24 sm:h-32"
                     color="from-indigo-400 to-cyan-300"
                     icon={<Bot className="h-7 w-7" />}
                   />
                 </div>
 
-                <div className="mt-5 overflow-hidden rounded-xl border border-white/10 bg-slate-950/45">
-                  <div className="grid grid-cols-[1fr_auto] px-4 py-3 text-xs font-bold text-slate-300">
+                <motion.div
+                  className={`playgame-rank-sheet ${
+                    isRankExpanded ? "playgame-rank-sheet-expanded" : ""
+                  } ${mobileTab !== "play" ? "playgame-rank-sheet-mobile-open" : ""
+                  }`}
+                  drag="y"
+                  dragElastic={0.12}
+                  dragConstraints={{ top: 0, bottom: 0 }}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.y < -24) setIsRankExpanded(true);
+                    if (info.offset.y > 24) setIsRankExpanded(false);
+                  }}
+                  onClick={() => setIsRankExpanded((current) => !current)}
+                >
+                  <div className="mx-auto mt-2 h-1.5 w-12 rounded-full bg-white/25" />
+                  <div className="grid grid-cols-[1fr_auto] px-4 py-2 text-xs font-bold text-slate-300">
                     <span>Rank & User</span>
-                    <span>Point</span>
+                    <span>{isRankExpanded ? "Close" : "Point"}</span>
                   </div>
-                  <div className="space-y-2 p-3">
+                  <div className="playgame-rank-list space-y-1.5 p-2.5">
                     {leaderboardRows.map((row, index) => (
                       <div
                         key={row.name}
@@ -115,16 +155,20 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
                       </div>
                     ))}
                   </div>
-                </div>
+                </motion.div>
               </section>
 
-              <aside className="rounded-2xl border border-white/10 bg-slate-950/55 p-4 shadow-xl shadow-black/20">
-                <div className="mb-4 rounded-xl border border-white/10 bg-white/10 p-4">
+              <aside
+                className={`playgame-card order-1 p-3 sm:p-4 lg:order-2 lg:block ${
+                  mobileTab === "play" ? "block" : "hidden"
+                }`}
+              >
+                <div className="mb-3 rounded-xl border border-fuchsia-300/20 bg-white/10 p-3 shadow-lg shadow-purple-950/20">
                   <p className="text-sm font-black text-white">Console Player</p>
                   <p className="mt-1 text-xs text-slate-300">Ready for a fast match</p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   <ActionCard
                     icon={<Swords className="h-5 w-5" />}
                     title="Tìm trận PvP"
@@ -175,14 +219,14 @@ const ActionCard = ({ icon, title, description, onClick, accent }) => (
   <button
     type="button"
     onClick={onClick}
-    className="group flex w-full items-center gap-3 rounded-xl border border-white/10 bg-white/10 p-3 text-left transition hover:border-fuchsia-200/50 hover:bg-white/15"
+    className="playgame-action group flex w-full items-center gap-3 p-3 text-left"
   >
     <span className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br ${accent} text-slate-950`}>
       {icon}
     </span>
     <span className="min-w-0 flex-1">
       <span className="block text-sm font-black text-white">{title}</span>
-      <span className="mt-1 block text-xs leading-5 text-slate-300">{description}</span>
+      <span className="mt-1 hidden text-xs leading-5 text-slate-300 sm:block">{description}</span>
     </span>
     <ChevronRight className="h-4 w-4 text-slate-400 transition group-hover:translate-x-1 group-hover:text-white" />
   </button>
