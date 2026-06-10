@@ -9,6 +9,7 @@ import SignupPage from "./page/SignupPage.jsx";
 import SigninPage from "./page/SigninPage.jsx";
 import "./App.css";
 import GameLayout from "./page/GameLayout.jsx";
+import { AudioProvider } from "./contexts/AudioContext.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
@@ -40,6 +41,10 @@ const router = createBrowserRouter(
           path: "gameplay",
           element: <GameLayout />,
         },
+        {
+          path: "playgame",
+          element: <GameLayout />,
+        },
       ],
     },
   ],
@@ -54,7 +59,9 @@ const router = createBrowserRouter(
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-      <RouterProvider router={router} />
+      <AudioProvider>
+        <RouterProvider router={router} />
+      </AudioProvider>
     </GoogleOAuthProvider>
   </StrictMode>
 );

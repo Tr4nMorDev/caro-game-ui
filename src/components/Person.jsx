@@ -1,4 +1,4 @@
-import { LogOut, UserRound, X } from "lucide-react";
+import { LogOut, Pencil, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signout, updateAvatar } from "../api/authApi";
@@ -50,10 +50,11 @@ const Person = () => {
 
   if (!isAuthenticated || !user) {
     return (
-      <header className="playgame-card playgame-profile-bar flex w-full items-center justify-between px-4 py-3">
+      <aside className="playgame-cyber-profile playgame-card flex min-h-0 flex-col justify-between p-4">
         <div>
+          <p className="cyber-label">status</p>
           <p className="text-sm font-semibold text-white">Caro Online</p>
-          <p className="text-xs text-slate-400">Vui long dang nhap de choi</p>
+          <p className="mt-1 text-xs text-slate-400">Vui long dang nhap de choi</p>
         </div>
         <button
           type="button"
@@ -62,53 +63,95 @@ const Person = () => {
         >
           Dang nhap
         </button>
-      </header>
+      </aside>
     );
   }
 
   return (
     <>
-      <header className="playgame-card playgame-profile-bar flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
+      <aside className="playgame-cyber-profile playgame-card flex min-h-0 flex-col justify-between gap-4 p-4">
+        <div className="space-y-4">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-2xl font-black text-lime-300">48</p>
+              <p className="cyber-label -mt-1">level</p>
+            </div>
+            <div className="text-right">
+              <p className="text-2xl font-black text-lime-300">1,425</p>
+              <p className="cyber-label -mt-1">coins awarded</p>
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={openAvatarPicker}
-            className="group relative rounded-md focus:outline-none focus:ring-2 focus:ring-fuchsia-300"
+            className="group cyber-avatar-frame relative block w-full focus:outline-none focus:ring-2 focus:ring-fuchsia-300"
             title="Doi anh dai dien"
           >
             {user.avatar ? (
               <img
                 src={user.avatar}
                 alt={user.name || "Player"}
-                className="h-11 w-11 rounded-md border border-white/20 object-cover transition group-hover:border-fuchsia-300 group-hover:brightness-110"
+                className="aspect-square w-full object-cover transition group-hover:brightness-110"
               />
             ) : (
-              <div className="flex h-11 w-11 items-center justify-center rounded-md border border-white/20 bg-slate-800 transition group-hover:border-fuchsia-300">
-                <UserRound className="h-5 w-5 text-slate-300" />
+              <div className="flex aspect-square w-full items-center justify-center bg-slate-950/70">
+                <UserRound className="h-12 w-12 text-slate-300" />
               </div>
             )}
-            <span className="pointer-events-none absolute -bottom-1 -right-1 rounded bg-fuchsia-400 px-1.5 py-0.5 text-[10px] font-black text-slate-950 opacity-0 transition group-hover:opacity-100">
+            <span className="pointer-events-none absolute bottom-2 right-2 border border-fuchsia-300 bg-black/70 px-2 py-1 text-[10px] font-black uppercase text-fuchsia-100 opacity-0 transition group-hover:opacity-100">
               edit
             </span>
           </button>
 
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-white">
-              {user.name || user.email || "Player"}
-            </p>
-            <p className="text-xs text-slate-400">San sang vao tran</p>
+          <div className="space-y-3">
+            <div>
+              <p className="cyber-label">name</p>
+              <p className="truncate text-base font-black uppercase text-fuchsia-300">
+                {user.name || user.email || "Player"}
+              </p>
+            </div>
+            <div>
+              <p className="cyber-label">occupation</p>
+              <p className="text-sm font-black uppercase text-fuchsia-300">Caro Player</p>
+            </div>
+            <div>
+              <p className="cyber-label">corporation</p>
+              <p className="text-sm font-black uppercase text-fuchsia-300">Synthelytix</p>
+            </div>
+            <div>
+              <p className="cyber-label">availability</p>
+              <button
+                type="button"
+                onClick={openAvatarPicker}
+                className="cyber-strip-button mt-1 w-full"
+                title="Doi ten hien thi"
+              >
+                <Pencil className="h-3 w-3" />
+                open for edit
+              </button>
+            </div>
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="playgame-danger-button inline-flex items-center gap-2"
-        >
-          <LogOut className="h-4 w-4" />
-          Dang xuat
-        </button>
-      </header>
+        <div className="space-y-4">
+          <div>
+            <p className="cyber-label">motto:</p>
+            <p className="mt-1 text-[11px] uppercase leading-5 tracking-[0.16em] text-slate-300">
+              place five stones before the network reads your mind.
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="cyber-strip-button w-full justify-center"
+          >
+            <LogOut className="h-4 w-4" />
+            Dang xuat
+          </button>
+        </div>
+      </aside>
 
       {isAvatarPickerOpen && (
         <div

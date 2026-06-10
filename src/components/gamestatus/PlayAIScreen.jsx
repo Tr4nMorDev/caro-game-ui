@@ -12,6 +12,7 @@ const PlayAIScreen = ({ onReplay, socket, data }) => {
   const [gameOver, setGameOver] = useState(false);
   const [myTimer, setMyTimer] = useState(30);
   const [aiTimer, setAiTimer] = useState(30);
+  const turnLabel = currentTurn === "X" ? "Your Turn" : "AI Turn";
 
   const handleDeleteRedis = async () => {
     await OutPlayWithAI(token);
@@ -77,70 +78,84 @@ const PlayAIScreen = ({ onReplay, socket, data }) => {
   };
 
   return (
-    <div className="playgame-board-screen flex w-full flex-col items-center justify-center gap-2 sm:gap-3">
-      <div className="grid w-full max-w-2xl grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-3">
-        <AiPlayerPanel
-          icon={<UserRound className="h-5 w-5" />}
-          name={user?.name || "Ban"}
-          symbol="X"
-          timer={myTimer}
-          active={currentTurn === "X"}
-        />
-        <div className="hidden text-center text-xs font-semibold uppercase tracking-widest text-slate-500 sm:block">
-          vs
+    <div className="cyber-game-screen playgame-cyber-main h-full min-h-0">
+      <div className="cyber-topline">
+        <div className="flex items-center gap-5">
+          <p>
+            <span className="text-lime-300">X</span> symbol
+          </p>
+          <p>
+            <span>{gameOver ? "Finished" : turnLabel}</span> active
+          </p>
         </div>
-        <AiPlayerPanel
-          icon={<Bot className="h-5 w-5" />}
-          name="AI"
-          symbol="O"
-          timer={aiTimer}
-          active={currentTurn === "O"}
-          align="right"
-        />
+        <div className="flex items-center gap-5 text-right">
+          <p>mode: AI</p>
+          <p>board: 15x15</p>
+        </div>
       </div>
 
-      <div
-        className="caro-board-shell playgame-board-wrap-ai"
-      >
-        <div
-          className="caro-board-grid"
-          style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
-        >
-          {board.map((cell, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => handleClick(index)}
-              className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
-              disabled={Boolean(cell) || gameOver || currentTurn !== "X"}
+      <div className="cyber-game-grid">
+        <section className="cyber-game-board-zone">
+          <div className="cyber-game-versus">
+            <AiPlayerPanel
+              icon={<UserRound className="h-5 w-5" />}
+              name={user?.name || "Ban"}
+              symbol="X"
+              timer={myTimer}
+              active={currentTurn === "X"}
+            />
+            <div className="cyber-vs-mark">vs</div>
+            <AiPlayerPanel
+              icon={<Bot className="h-5 w-5" />}
+              name="AI"
+              symbol="O"
+              timer={aiTimer}
+              active={currentTurn === "O"}
+              align="right"
+            />
+          </div>
+
+          <div className="caro-board-shell playgame-board-wrap-ai cyber-game-board-shell">
+            <div
+              className="caro-board-grid"
+              style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
             >
-              {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
-              {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
-            </button>
-          ))}
-        </div>
+              {board.map((cell, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleClick(index)}
+                  className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
+                  disabled={Boolean(cell) || gameOver || currentTurn !== "X"}
+                >
+                  {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
+                  {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <aside className="cyber-quest-panel cyber-game-side">
+          <div className="cyber-quest-title">AI Session</div>
+          <p className="cyber-label mt-4">turn status</p>
+          <h2>{gameOver ? "Game Finished" : turnLabel}</h2>
+          <p className="cyber-label mt-5">objective</p>
+          <p className="cyber-body">Practice clean attack lines against the AI node.</p>
+          {gameOver && <div className="cyber-reward mt-4">Match Closed</div>}
+
+          <button type="button" className="cyber-cancel-button" onClick={handleDeleteRedis}>
+            Exit Match
+          </button>
+        </aside>
       </div>
-
-      {gameOver && (
-        <div className="playgame-card px-4 py-2 text-sm text-slate-200">
-          Tran da ket thuc
-        </div>
-      )}
-
-      <button
-        type="button"
-        className="playgame-danger-button"
-        onClick={handleDeleteRedis}
-      >
-        Thoat tran
-      </button>
     </div>
   );
 };
 
 const AiPlayerPanel = ({ icon, name, symbol, timer, active, align }) => (
   <div
-    className={`playgame-player-panel flex items-center gap-3 px-3 py-2 ${
+    className={`cyber-game-player-panel flex items-center gap-3 px-3 py-2 ${
       active ? "playgame-player-panel-active" : ""
     } ${align === "right" ? "sm:justify-end" : ""}`}
   >

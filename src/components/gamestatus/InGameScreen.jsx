@@ -16,6 +16,7 @@ const InGameScreen = ({
 
   const you = players?.[youAre];
   const opponent = players?.[youAre === "X" ? "O" : "X"];
+  const turnLabel = currentTurn === youAre ? "Your Turn" : "Opponent Turn";
 
   useEffect(() => {
     const isMyTurn = currentTurn === youAre;
@@ -67,63 +68,84 @@ const InGameScreen = ({
   };
 
   return (
-    <div className="playgame-board-screen flex w-full flex-col items-center justify-center gap-2 sm:gap-3">
-      <div className="grid w-full max-w-3xl grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-3">
-        <PlayerPanel
-          player={you}
-          symbol={youAre}
-          timer={myTimer}
-          active={currentTurn === youAre}
-          align="left"
-        />
-        <div className="hidden text-center text-xs font-semibold uppercase tracking-widest text-slate-500 sm:block">
-          vs
+    <div className="cyber-game-screen playgame-cyber-main h-full min-h-0">
+      <div className="cyber-topline">
+        <div className="flex items-center gap-5">
+          <p>
+            <span className="text-lime-300">{youAre}</span> symbol
+          </p>
+          <p>
+            <span>{turnLabel}</span> active
+          </p>
         </div>
-        <PlayerPanel
-          player={opponent}
-          symbol={youAre === "X" ? "O" : "X"}
-          timer={opponentTimer}
-          active={currentTurn !== youAre}
-          align="right"
-        />
+        <div className="flex items-center gap-5 text-right">
+          <p>mode: pvp</p>
+          <p>board: 20x20</p>
+        </div>
       </div>
 
-      <div
-        className="caro-board-shell playgame-board-wrap"
-      >
-        <div
-          className="caro-board-grid"
-          style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
-        >
-          {board.map((cell, index) => (
-            <button
-              key={index}
-              type="button"
-              onClick={() => handleClick(index)}
-              className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
-              disabled={board[index] !== null || currentTurn !== youAre}
+      <div className="cyber-game-grid">
+        <section className="cyber-game-board-zone">
+          <div className="cyber-game-versus">
+            <PlayerPanel
+              player={you}
+              symbol={youAre}
+              timer={myTimer}
+              active={currentTurn === youAre}
+              align="left"
+            />
+            <div className="cyber-vs-mark">vs</div>
+            <PlayerPanel
+              player={opponent}
+              symbol={youAre === "X" ? "O" : "X"}
+              timer={opponentTimer}
+              active={currentTurn !== youAre}
+              align="right"
+            />
+          </div>
+
+          <div className="caro-board-shell playgame-board-wrap cyber-game-board-shell">
+            <div
+              className="caro-board-grid"
+              style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
             >
-              {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
-              {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
-            </button>
-          ))}
-        </div>
-      </div>
+              {board.map((cell, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => handleClick(index)}
+                  className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
+                  disabled={board[index] !== null || currentTurn !== youAre}
+                >
+                  {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
+                  {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
 
-      <button
-        type="button"
-        className="playgame-danger-button"
-        onClick={onExitGame}
-      >
-        Thoat tran
-      </button>
+        <aside className="cyber-quest-panel cyber-game-side">
+          <div className="cyber-quest-title">Live Match</div>
+          <p className="cyber-label mt-4">turn status</p>
+          <h2>{turnLabel}</h2>
+          <p className="cyber-label mt-5">match id</p>
+          <p className="cyber-body">{matchId || "syncing"}</p>
+          <p className="cyber-label mt-5">objective</p>
+          <p className="cyber-body">Create a five-stone sequence before the opponent completes theirs.</p>
+
+          <button type="button" className="cyber-cancel-button" onClick={onExitGame}>
+            Exit Match
+          </button>
+        </aside>
+      </div>
     </div>
   );
 };
 
 const PlayerPanel = ({ player, symbol, timer, active, align }) => (
   <div
-    className={`playgame-player-panel flex items-center gap-3 px-3 py-2 ${
+    className={`cyber-game-player-panel flex items-center gap-3 px-3 py-2 ${
       active ? "playgame-player-panel-active" : ""
     } ${align === "right" ? "sm:justify-end" : ""}`}
   >

@@ -27,6 +27,7 @@ const Caro = () => {
   const [aiMatchData, setAiMatchData] = useState(null); // <-- Thêm state này
   const handleReplay = () => {
     // Reset game logic ở đây
+    setisWinner(false);
     setStatus("IDLE");
   };
 
@@ -80,12 +81,17 @@ const Caro = () => {
         console.log("⌛ Waiting for opponent...");
       });
       socket.on("gameEnd", (gameEndPayload) =>{
-        console.log("Game end payload :" , gameEndPayload.winnerId);
-        console.log("Game end")
-        if(gameEndPayload.winnerId === user.id ) {
-          console.log("Ban da win  ", gameEndPayload.winnerId);
-          setisWinner(true);
-        }
+        const winnerId = gameEndPayload?.winnerId;
+        const currentUserId = user.id;
+        const didWin =
+          winnerId !== null &&
+          winnerId !== undefined &&
+          String(winnerId) === String(currentUserId);
+
+        console.log("Game end payload winnerId:", winnerId);
+        console.log("Current user id:", currentUserId);
+        console.log("Did win:", didWin);
+        setisWinner(didWin);
         setStatus("WINER");
       })
 
@@ -123,6 +129,7 @@ const Caro = () => {
 
   const handleFindMatch = async () => {
     try {
+      setisWinner(false);
       const result = await startMatchmaking(token);
       console.log("Matchmaking started:", result);
       setStatus("MATCHING");
@@ -150,6 +157,7 @@ const Caro = () => {
     setStatus("IDLE");
   };
   const onPlayCarowithAI = async () => {
+    setisWinner(false);
     const result = await startMatchWithAI(token);
     console.log("đã khởi tạo màn chơi" , result);
     setAiMatchData(result); // <-- Lưu match data
@@ -200,7 +208,7 @@ const Caro = () => {
   }
 
   return (
-    <section className="playgame-screen-fit flex w-full items-center justify-center text-white">
+    <section className="playgame-screen-fit w-full text-white">
       {renderScreen()}
     </section>
   );

@@ -1,13 +1,19 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { signup } from "../api/authApi";
+import { GoogleLogin } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
+import { googleLogin, signup, trackGoogleLogin } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
+import { useAudio } from "../contexts/AudioContext";
+import { getTrackingContext } from "../utils/tracking";
 
 const Information = () => {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { musicEnabled, toggleMusic } = useAudio();
   const [isGuestLoading, setIsGuestLoading] = useState(false);
   const [showFeedbackToast, setShowFeedbackToast] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
   const developerEmail = "dev@synthelytix.com";
   const contactHref = `mailto:${developerEmail}?subject=${encodeURIComponent(
     "Caro Game Support"
@@ -40,6 +46,30 @@ const Information = () => {
     }
   };
 
+  const handleGoogleLoginSuccess = async (credentialResponse) => {
+    try {
+      const result = await googleLogin(credentialResponse.credential);
+      login({ token: result.token, user: result.user });
+
+      try {
+        await trackGoogleLogin(result.token, {
+          ...getTrackingContext(),
+          location: window.location.href,
+        });
+      } catch (error) {
+        console.error("Google login tracking error:", error.message);
+      }
+
+      navigate("/gameplay");
+    } catch (error) {
+      console.error("Google login error:", error.message);
+    }
+  };
+
+  const handleGoogleLoginError = () => {
+    console.error("Google OAuth failed");
+  };
+
   useEffect(() => {
     let hideTimer;
     const showTimer = setInterval(() => {
@@ -58,26 +88,28 @@ const Information = () => {
 
   return (
     <section className="relative h-dvh w-full overflow-hidden px-4 py-4 sm:px-6 lg:px-8">
-      <div className="grid w-full grid-cols-3 gap-2 sm:flex sm:items-start sm:justify-between sm:gap-4">
-        <div className="contents sm:flex sm:flex-wrap sm:gap-3">
-          <Link
-            to="/signup"
-            className="flex h-11 items-center justify-center rounded-xl border border-white/15 bg-white/10 px-2 text-center text-[11px] font-bold text-white shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/15 sm:h-auto sm:px-5 sm:py-3 sm:text-sm"
-          >
-            Đăng kí
-          </Link>
-          <Link
-            to="/signin"
-            className="flex h-11 items-center justify-center rounded-xl border border-white/15 bg-white/10 px-2 text-center text-[11px] font-bold text-white shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/15 sm:h-auto sm:px-5 sm:py-3 sm:text-sm"
-          >
-            Đăng nhập
-          </Link>
+      <div className="absolute left-4 right-4 top-4 z-20 flex items-start justify-between gap-3">
+        <div className="group relative h-9 w-[160px] overflow-hidden sm:w-[180px]">
+          <div className="cyber-home-button pointer-events-none flex h-full items-center justify-center px-4 py-2">
+            google login
+          </div>
+          <div className="absolute inset-0 opacity-0">
+            <GoogleLogin
+              onSuccess={handleGoogleLoginSuccess}
+              onError={handleGoogleLoginError}
+              text="signin_with"
+              theme="filled_black"
+              shape="pill"
+              size="medium"
+              width="180"
+            />
+          </div>
         </div>
 
-        <div className="group relative sm:ml-auto">
+        <div className="group relative">
           <button
             type="button"
-            className="flex h-11 w-full cursor-pointer items-center justify-center rounded-xl border border-white/15 bg-white/10 px-2 text-center font-mono text-[11px] font-bold text-white shadow-lg shadow-black/20 backdrop-blur-md transition hover:bg-white/15 disabled:cursor-wait disabled:opacity-70 sm:h-auto sm:px-5 sm:py-3 sm:text-sm"
+            className="cyber-home-button flex h-9 w-[120px] cursor-pointer items-center justify-center px-4 py-2 text-center disabled:cursor-wait disabled:opacity-70"
             onClick={handleGuestLogin}
             disabled={isGuestLoading}
           >
@@ -92,7 +124,7 @@ const Information = () => {
       <div className="group absolute bottom-4 left-4 z-10">
         <a
           href={contactHref}
-          className="block rounded-xl border border-white/15 bg-white/10 px-4 py-2 font-mono text-xs font-bold text-white/85 shadow-lg shadow-black/25 backdrop-blur-md transition hover:border-cyan-300/50 hover:bg-cyan-300/10 hover:text-cyan-100"
+          className="cyber-home-button block px-4 py-2"
         >
           {developerEmail}
         </a>
@@ -111,6 +143,64 @@ const Information = () => {
       >
         Gửi feedback trải nghiệm của bạn
       </a>
+
+      <div className="fixed bottom-4 right-4 z-30 flex flex-col items-end gap-2">
+        <div
+          className={`cyber-home-settings-panel w-[210px] max-w-[calc(100vw-2rem)] origin-bottom-right p-2 transition duration-300 ${
+            isSettingsOpen
+              ? "pointer-events-auto translate-y-0 scale-100 opacity-100"
+              : "pointer-events-none translate-y-4 scale-95 opacity-0"
+          }`}
+        >
+          <button
+            type="button"
+            onClick={() => setSoundEffectsEnabled((value) => !value)}
+            className="cyber-home-setting-row flex w-full items-center justify-between gap-3 px-2 py-1.5 text-left"
+            aria-pressed={soundEffectsEnabled}
+          >
+            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-white/85">
+              Sound Effects
+            </span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-fuchsia-300/40 text-base font-black text-fuchsia-200">
+              {soundEffectsEnabled ? "✓" : "×"}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={toggleMusic}
+            className="cyber-home-setting-row flex w-full items-center justify-between gap-3 px-2 py-1.5 text-left"
+            aria-pressed={musicEnabled}
+          >
+            <span className="font-mono text-[11px] font-bold uppercase tracking-[0.12em] text-white/70">
+              Music
+            </span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-fuchsia-300/25 text-base font-black text-fuchsia-300/70">
+              {musicEnabled ? "✓" : "×"}
+            </span>
+          </button>
+        </div>
+
+        <div className="flex items-end gap-3">
+          <div className="pb-1 text-right font-mono text-[10px] font-bold uppercase leading-4 tracking-[0.08em] text-fuchsia-100/75 sm:text-xs">
+            <p>online : _</p>
+            <p>server time active : _</p>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setIsSettingsOpen((value) => !value)}
+            className="cyber-home-button group flex items-center gap-2 px-4 py-2"
+            aria-expanded={isSettingsOpen}
+            aria-label="Mở cài đặt âm thanh"
+          >
+            <span>setting</span>
+            <span className="text-sm leading-none transition duration-300 group-hover:rotate-45">
+              ⚙
+            </span>
+          </button>
+        </div>
+      </div>
     </section>
   );
 };
