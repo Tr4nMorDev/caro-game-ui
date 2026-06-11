@@ -115,23 +115,25 @@ const PlayAIScreen = ({ onReplay, socket, data }) => {
             />
           </div>
 
-          <div className="caro-board-shell playgame-board-wrap-ai cyber-game-board-shell">
-            <div
-              className="caro-board-grid"
-              style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
-            >
-              {board.map((cell, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => handleClick(index)}
-                  className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
-                  disabled={Boolean(cell) || gameOver || currentTurn !== "X"}
-                >
-                  {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
-                  {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
-                </button>
-              ))}
+          <div className="cyber-game-board-scroll">
+            <div className="caro-board-shell playgame-board-wrap-ai cyber-game-board-shell">
+              <div
+                className="caro-board-grid"
+                style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+              >
+                {board.map((cell, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => handleClick(index)}
+                    className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
+                    disabled={Boolean(cell) || gameOver || currentTurn !== "X"}
+                  >
+                    {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
+                    {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </section>

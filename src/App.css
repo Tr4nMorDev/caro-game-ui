@@ -1569,6 +1569,15 @@ select,
   justify-self: center;
 }
 
+.cyber-game-board-scroll {
+  align-self: center;
+  justify-self: center;
+  display: flex;
+  width: 100%;
+  min-height: 0;
+  justify-content: center;
+}
+
 .cyber-game-side {
   display: flex;
   min-height: 0;
@@ -1777,6 +1786,36 @@ select,
     padding: 0.55rem;
   }
 
+  .cyber-game-board-scroll {
+    align-self: stretch;
+    justify-self: stretch;
+    justify-content: flex-start;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+  }
+
+  .cyber-game-board-scroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cyber-game-board-scroll .cyber-game-board-shell.playgame-board-wrap {
+    width: 620px;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
+  .cyber-game-board-scroll .cyber-game-board-shell.playgame-board-wrap-ai {
+    width: 560px;
+    max-width: none;
+    flex: 0 0 auto;
+  }
+
   .cyber-game-versus {
     grid-template-columns: 1fr 1fr;
     gap: 0.45rem;
@@ -1791,6 +1830,171 @@ select,
     min-height: 44px;
     gap: 0.45rem;
     padding: 0.45rem;
+  }
+}
+
+@media (max-width: 720px) {
+  .playgame-page {
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .playgame-cyber-shell {
+    height: 100svh;
+    grid-template-rows: 56px minmax(0, 1fr);
+    gap: 0.45rem;
+    padding: 0.45rem;
+  }
+
+  .playgame-cyber-profile {
+    height: 56px;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0.42rem 0.55rem;
+  }
+
+  .playgame-cyber-profile > div:first-child {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+    width: 100%;
+  }
+
+  .playgame-cyber-profile > div:first-child > div:first-child,
+  .playgame-cyber-profile > div:last-child {
+    display: none;
+  }
+
+  .playgame-cyber-profile > div:first-child > div:nth-child(3) {
+    display: block;
+    min-width: 0;
+  }
+
+  .playgame-cyber-profile > div:first-child > div:nth-child(3) > div:not(:first-child) {
+    display: none;
+  }
+
+  .cyber-avatar-frame {
+    width: 42px;
+  }
+
+  .cyber-avatar-frame img,
+  .cyber-avatar-frame > div {
+    height: 42px;
+  }
+
+  .playgame-cyber-main {
+    height: 100%;
+    min-height: 0;
+    padding: 0.55rem;
+  }
+
+  .playgame-cyber-main::before {
+    inset: 2.25rem 0.45rem 0.45rem;
+  }
+
+  .cyber-topline {
+    min-height: 1.35rem;
+    align-items: center;
+    font-size: 0.46rem;
+    letter-spacing: 0.12em;
+  }
+
+  .cyber-topline > div:first-child p:nth-child(2),
+  .cyber-topline > div:last-child p:not(:last-child) {
+    display: none;
+  }
+
+  .cyber-topline span {
+    font-size: 0.82rem;
+  }
+
+  .cyber-content-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+    gap: 0.45rem;
+    height: calc(100% - 1.65rem);
+    min-height: 0;
+    padding-top: 0.35rem;
+  }
+
+  .cyber-hero-panel {
+    grid-template-rows: minmax(0, 1fr) auto;
+    min-height: 0;
+  }
+
+  .cyber-hero-copy {
+    display: none;
+  }
+
+  .cyber-image-frame {
+    height: 100%;
+    min-height: 0;
+    margin: 0 0 0.45rem;
+  }
+
+  .cyber-image-frame img {
+    height: 100%;
+    min-height: 0;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .cyber-tab-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .cyber-tab-row button {
+    padding: 0.35rem 0.42rem;
+  }
+
+  .cyber-tab-row button span {
+    font-size: 0.52rem;
+  }
+
+  .cyber-tab-row button small {
+    display: none;
+  }
+
+  .cyber-content-grid .cyber-quest-panel {
+    display: block;
+    border-left: 0;
+    border-top: 1px solid rgba(217, 70, 239, 0.5);
+    padding: 0.45rem 0 0;
+  }
+
+  .cyber-content-grid .cyber-quest-title,
+  .cyber-content-grid .cyber-quest-panel > .cyber-label,
+  .cyber-content-grid .cyber-quest-panel > h2,
+  .cyber-content-grid .cyber-quest-panel > .cyber-body,
+  .cyber-content-grid .cyber-quest-panel > .cyber-reward,
+  .cyber-content-grid .cyber-quest-panel > .flex {
+    display: none;
+  }
+
+  .cyber-content-grid .cyber-quest-panel .space-y-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.42rem;
+  }
+
+  .cyber-content-grid .cyber-quest-panel .space-y-2 > * {
+    margin-top: 0 !important;
+  }
+
+  .cyber-action-button {
+    min-height: 46px;
+    padding: 0.45rem;
+  }
+
+  .cyber-action-button strong {
+    font-size: 0.58rem;
+  }
+
+  .cyber-action-button small {
+    display: none;
   }
 }
 
