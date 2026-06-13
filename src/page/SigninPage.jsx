@@ -3,10 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GoogleLogin } from "@react-oauth/google";
 import { overlayVariants, formVariants } from "../untils/motion";
-import { googleLogin, signin, trackGoogleLogin } from "../api/authApi";
+import { googleLogin, signin } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
 import BackgroundFirst from "../components/BackgroundFirst";
-import { getTrackingContext } from "../utils/tracking";
+// import { trackGoogleLogin } from "../api/authApi";
+// import { getTrackingContext } from "../utils/tracking";
 
 const SigninPage = () => {
   const { login } = useAuth();
@@ -39,14 +40,15 @@ const SigninPage = () => {
       console.log("Signin success:", data);
       login({ token: data.token, user: data.user });
 
-      try {
-        await trackGoogleLogin(data.token, {
-          ...getTrackingContext(),
-          location: window.location.href,
-        });
-      } catch (error) {
-        console.error("Google login tracking error:", error.message);
-      }
+      // Google login tracking disabled.
+      // try {
+      //   await trackGoogleLogin(data.token, {
+      //     ...getTrackingContext(),
+      //     location: window.location.href,
+      //   });
+      // } catch (error) {
+      //   console.error("Google login tracking error:", error.message);
+      // }
 
       navigate("/gameplay");
     } catch (error) {

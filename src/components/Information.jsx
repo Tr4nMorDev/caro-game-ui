@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
-import { googleLogin, signup, trackGoogleLogin } from "../api/authApi";
+import { googleLogin, signup } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
 import { useAudio } from "../contexts/AudioContext";
-import { getTrackingContext } from "../utils/tracking";
+// import { trackGoogleLogin } from "../api/authApi";
+// import { getTrackingContext } from "../utils/tracking";
 
 const Information = () => {
   const navigate = useNavigate();
@@ -52,14 +53,15 @@ const Information = () => {
       const result = await googleLogin(credentialResponse.credential);
       login({ token: result.token, user: result.user });
 
-      try {
-        await trackGoogleLogin(result.token, {
-          ...getTrackingContext(),
-          location: window.location.href,
-        });
-      } catch (error) {
-        console.error("Google login tracking error:", error.message);
-      }
+      // Google login tracking disabled.
+      // try {
+      //   await trackGoogleLogin(result.token, {
+      //     ...getTrackingContext(),
+      //     location: window.location.href,
+      //   });
+      // } catch (error) {
+      //   console.error("Google login tracking error:", error.message);
+      // }
 
       navigate("/gameplay");
     } catch (error) {
