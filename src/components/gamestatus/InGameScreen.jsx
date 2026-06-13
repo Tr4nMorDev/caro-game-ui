@@ -159,10 +159,10 @@ const PlayerPanel = ({ player, symbol, timer, active, align }) => (
     />
     <div className={`min-w-0 ${align === "right" ? "sm:text-right" : ""}`}>
       <p className="truncate text-sm font-semibold text-white">
-        {player?.name || "Dang cho"}
+        {player?.name || "Waiting"}
       </p>
       <p className="text-xs text-slate-400">
-        {active ? `${timer}s` : "Cho luot"}
+        {active ? `${timer}s` : "Waiting turn"}
       </p>
     </div>
     {align !== "right" && <SymbolBadge symbol={symbol} />}

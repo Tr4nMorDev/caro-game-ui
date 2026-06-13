@@ -139,6 +139,12 @@ const Caro = () => {
   };
 
   const handleCancelMatch = async () => {
+    if (socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+    setStatus("IDLE");
+
     try {
       const result = await cancelMatchmaking(token);
       console.log(result)
@@ -199,9 +205,9 @@ const Caro = () => {
   if (!user || !token) {
     return (
       <section className="w-full max-w-xl rounded-lg border border-white/10 bg-white/5 p-6 text-center shadow-xl shadow-black/20">
-        <h1 className="text-2xl font-bold text-white">Can dang nhap</h1>
+        <h1 className="text-2xl font-bold text-white">Sign In Required</h1>
         <p className="mt-2 text-sm text-slate-400">
-          Hay dang nhap de tim tran hoac choi voi AI.
+          Please sign in to find a match or play with AI.
         </p>
       </section>
     );

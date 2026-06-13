@@ -14,11 +14,12 @@ const Information = () => {
   const [showFeedbackToast, setShowFeedbackToast] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
+  const [localTime, setLocalTime] = useState(() => getTimeLabel());
   const developerEmail = "dev@synthelytix.com";
   const contactHref = `mailto:${developerEmail}?subject=${encodeURIComponent(
     "Caro Game Support"
   )}&body=${encodeURIComponent(
-    "Xin chào dev,\n\nTôi cần hỗ trợ về Caro Game:\n\n"
+    "Hello dev,\n\nI need support for Caro Game:\n\n"
   )}`;
 
   const handleGuestLogin = async () => {
@@ -86,6 +87,11 @@ const Information = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const timer = setInterval(() => setLocalTime(getTimeLabel()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <section className="relative h-dvh w-full overflow-hidden px-4 py-4 sm:px-6 lg:px-8">
       <div className="absolute left-4 right-4 top-4 z-20 flex items-start justify-between gap-3">
@@ -116,20 +122,17 @@ const Information = () => {
             {isGuestLoading ? "loading..." : "console"}
           </button>
           <div className="pointer-events-none absolute right-0 top-full mt-2 w-max max-w-[240px] rounded-lg border border-white/10 bg-slate-950/90 px-3 py-2 text-xs font-medium text-slate-100 opacity-0 shadow-xl shadow-black/30 transition group-hover:opacity-100">
-            Tạo tài khoản khách và vào game
+            Create a guest account and enter the game
           </div>
         </div>
       </div>
 
       <div className="group absolute bottom-4 left-4 z-10">
-        <a
-          href={contactHref}
-          className="cyber-home-button block px-4 py-2"
-        >
+        <a href={contactHref} className="cyber-home-button block px-4 py-2">
           {developerEmail}
         </a>
         <div className="pointer-events-none absolute bottom-full left-0 mb-2 w-max max-w-[230px] rounded-lg border border-white/10 bg-slate-950/90 px-3 py-2 text-xs font-medium text-slate-100 opacity-0 shadow-xl shadow-black/30 transition group-hover:opacity-100">
-          Gửi mail feedback cho dev
+          Send feedback email to dev
         </div>
       </div>
 
@@ -141,7 +144,7 @@ const Information = () => {
             : "pointer-events-none translate-x-4 opacity-0"
         }`}
       >
-        Gửi feedback trải nghiệm của bạn
+        Send feedback about your experience
       </a>
 
       <div className="fixed bottom-4 right-4 z-30 flex flex-col items-end gap-2">
@@ -182,9 +185,9 @@ const Information = () => {
         </div>
 
         <div className="flex items-end gap-3">
-          <div className="pb-1 text-right font-mono text-[10px] font-bold uppercase leading-4 tracking-[0.08em] text-fuchsia-100/75 sm:text-xs">
+          <div className="home-status-panel pb-1 text-right font-mono text-[10px] font-bold uppercase leading-4 tracking-[0.08em] text-fuchsia-100/75 sm:text-xs">
             <p>online : _</p>
-            <p>server time active : _</p>
+            <p>server time active : {localTime}</p>
           </div>
 
           <button
@@ -192,7 +195,7 @@ const Information = () => {
             onClick={() => setIsSettingsOpen((value) => !value)}
             className="cyber-home-button group flex items-center gap-2 px-4 py-2"
             aria-expanded={isSettingsOpen}
-            aria-label="Mở cài đặt âm thanh"
+            aria-label="Open audio settings"
           >
             <span>setting</span>
             <span className="text-sm leading-none transition duration-300 group-hover:rotate-45">
@@ -203,6 +206,14 @@ const Information = () => {
       </div>
     </section>
   );
+};
+
+const getTimeLabel = () => {
+  return new Date().toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 };
 
 export default Information;

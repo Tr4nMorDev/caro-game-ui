@@ -1,45 +1,44 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { GoogleLogin } from "@react-oauth/google";
 import { overlayVariants, formVariants } from "../untils/motion";
-import { useNavigate } from "react-router-dom";
 import { googleLogin, signin, trackGoogleLogin } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
 import BackgroundFirst from "../components/BackgroundFirst";
 import { getTrackingContext } from "../utils/tracking";
+
 const SigninPage = () => {
-  const { user, isAuthenticated, logout, login } = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-  }); 
+  });
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value   });
+  const handleChange = (event) => {
+    setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     try {
       const data = await signin(formData);
-      // Lưu token vào localStorage (hoặc context)
       login({ token: data.token, user: data.user });
       navigate("/gameplay");
     } catch (error) {
-      console.error("Lỗi đăng nhập:", error.message);
+      console.error("Signin error:", error.message);
     }
   };
 
   const handleGoogleLoginSuccess = async (credentialResponse) => {
     try {
-      console.log("Google OAuth : ", credentialResponse);
+      console.log("Google OAuth:", credentialResponse);
       const data = await googleLogin(credentialResponse.credential);
-      console.log("Đăng nhập thành công:", data);
+      console.log("Signin success:", data);
       login({ token: data.token, user: data.user });
-      console.log("[google-login-tracking] queued after google login");
+
       try {
         await trackGoogleLogin(data.token, {
           ...getTrackingContext(),
@@ -48,14 +47,15 @@ const SigninPage = () => {
       } catch (error) {
         console.error("Google login tracking error:", error.message);
       }
+
       navigate("/gameplay");
-    } catch (err) {
-      console.error("Lỗi gửi token lên backend:", err.message);
+    } catch (error) {
+      console.error("Google login error:", error.message);
     }
   };
 
   const handleGoogleLoginError = () => {
-    console.log("Google OAuth Failed");
+    console.log("Google OAuth failed");
   };
 
   return (
@@ -67,7 +67,7 @@ const SigninPage = () => {
         variants={overlayVariants}
         initial="hidden"
         animate="visible"
-      ></motion.div>
+      />
 
       <motion.div
         className="fixed inset-0 z-20 flex items-center justify-center px-4"
@@ -81,50 +81,46 @@ const SigninPage = () => {
           onClick={(event) => event.stopPropagation()}
         >
           <div className="auth-warp-content">
-          <h2 className="text-3xl font-bold mb-6 text-center">Đăng nhập</h2>
+            <h2 className="mb-6 text-center text-3xl font-bold">Sign In</h2>
 
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Email"
-              className="rounded border border-white/15 bg-white/10 px-4 py-2 text-white placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            />
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Mật khẩu"
-              className="rounded border border-white/15 bg-white/10 px-4 py-2 text-white placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
-            />
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-purple-500 to-cyan-500 py-2 px-4 rounded text-white font-semibold hover:opacity-90 transition"
-            >
-              Đăng nhập
-            </button>
-          </form>
+            <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Email"
+                className="rounded border border-white/15 bg-white/10 px-4 py-2 text-white placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              />
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Password"
+                className="rounded border border-white/15 bg-white/10 px-4 py-2 text-white placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-cyan-400"
+              />
+              <button
+                type="submit"
+                className="rounded bg-gradient-to-r from-purple-500 to-cyan-500 px-4 py-2 font-semibold text-white transition hover:opacity-90"
+              >
+                Sign In
+              </button>
+            </form>
 
-          <div className="my-4 flex flex-col gap-3 justify-center items-center">
-            <GoogleLogin
-              onSuccess={handleGoogleLoginSuccess}
-              onError={handleGoogleLoginError}
-            />
+            <div className="my-4 flex flex-col items-center justify-center gap-3">
+              <GoogleLogin
+                onSuccess={handleGoogleLoginSuccess}
+                onError={handleGoogleLoginError}
+              />
+            </div>
 
-          </div>
-
-          <p className="text-sm text-gray-400 mt-4 text-center">
-            Chưa có tài khoản?{" "}
-            <Link
-              to="/signup"
-              className="text-purple-400 underline hover:text-purple-200"
-            >
-              Đăng ký ngay
-            </Link>
-          </p>
+            <p className="mt-4 text-center text-sm text-gray-400">
+              Don&apos;t have an account?{" "}
+              <Link to="/signup" className="text-purple-400 underline hover:text-purple-200">
+                Sign Up
+              </Link>
+            </p>
           </div>
         </div>
       </motion.div>

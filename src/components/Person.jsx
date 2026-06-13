@@ -2,14 +2,18 @@ import { LogOut, Pencil, UserRound, X } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signout, updateAvatar } from "../api/authApi";
+import { useAudio } from "../contexts/AudioContext";
 import { useAuth } from "../contexts/AuthContext";
 
 const chibiAvatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.png`);
 
 const Person = () => {
   const { user, isAuthenticated, logout, token, updateUser } = useAuth();
+  const { musicEnabled, toggleMusic } = useAudio();
   const [isAvatarPickerOpen, setIsAvatarPickerOpen] = useState(false);
   const [isSavingAvatar, setIsSavingAvatar] = useState(false);
+  const [isProfileSettingsOpen, setIsProfileSettingsOpen] = useState(false);
+  const [soundEffectsEnabled, setSoundEffectsEnabled] = useState(true);
   const [profileName, setProfileName] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState("");
   const navigate = useNavigate();
@@ -54,14 +58,14 @@ const Person = () => {
         <div>
           <p className="cyber-label">status</p>
           <p className="text-sm font-semibold text-white">Caro Online</p>
-          <p className="mt-1 text-xs text-slate-400">Vui long dang nhap de choi</p>
+          <p className="mt-1 text-xs text-slate-400">Please sign in to play</p>
         </div>
         <button
           type="button"
           onClick={() => navigate("/signin")}
           className="playgame-primary-button"
         >
-          Dang nhap
+          Sign in
         </button>
       </aside>
     );
@@ -70,7 +74,7 @@ const Person = () => {
   return (
     <>
       <aside className="playgame-cyber-profile playgame-card flex min-h-0 flex-col justify-between gap-4 p-4">
-        <div className="space-y-4">
+        <div className="playgame-profile-summary space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-2xl font-black text-lime-300">48</p>
@@ -86,7 +90,7 @@ const Person = () => {
             type="button"
             onClick={openAvatarPicker}
             className="group cyber-avatar-frame relative block w-full focus:outline-none focus:ring-2 focus:ring-fuchsia-300"
-            title="Doi anh dai dien"
+            title="Change avatar"
           >
             {user.avatar ? (
               <img
@@ -125,17 +129,52 @@ const Person = () => {
                 type="button"
                 onClick={openAvatarPicker}
                 className="cyber-strip-button mt-1 w-full"
-                title="Doi ten hien thi"
+                title="Change display name"
               >
                 <Pencil className="h-3 w-3" />
                 open for edit
               </button>
+              <div className="playgame-profile-settings mt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsProfileSettingsOpen((value) => !value)}
+                  className="cyber-strip-button w-full justify-between"
+                  aria-expanded={isProfileSettingsOpen}
+                >
+                  <span>setting</span>
+                  <span className="text-sm leading-none transition duration-300">⚙</span>
+                </button>
+                <div
+                  className={`playgame-audio-settings mt-2 space-y-1.5 ${
+                    isProfileSettingsOpen ? "playgame-audio-settings-open" : ""
+                  }`}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setSoundEffectsEnabled((value) => !value)}
+                    className="playgame-audio-row"
+                    aria-pressed={soundEffectsEnabled}
+                  >
+                    <span>Sound Effects</span>
+                    <span>{soundEffectsEnabled ? "on" : "off"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={toggleMusic}
+                    className="playgame-audio-row"
+                    aria-pressed={musicEnabled}
+                  >
+                    <span>Music</span>
+                    <span>{musicEnabled ? "on" : "off"}</span>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div>
+        <div className="playgame-profile-actions space-y-4">
+          <div className="playgame-profile-motto">
             <p className="cyber-label">motto:</p>
             <p className="mt-1 text-[11px] uppercase leading-5 tracking-[0.16em] text-slate-300">
               place five stones before the network reads your mind.
@@ -148,7 +187,7 @@ const Person = () => {
             className="cyber-strip-button w-full justify-center"
           >
             <LogOut className="h-4 w-4" />
-            Dang xuat
+            Sign Out
           </button>
         </div>
       </aside>
@@ -164,9 +203,9 @@ const Person = () => {
           >
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-xl font-black">Doi ho so</h2>
+                <h2 className="text-xl font-black">Edit Profile</h2>
                 <p className="mt-1 text-sm text-slate-400">
-                  Doi ten hien thi va chon avatar chibi de luu vao tai khoan.
+                  Update your display name and choose a chibi avatar for your account.
                 </p>
               </div>
               <button
@@ -180,7 +219,7 @@ const Person = () => {
 
             <label className="mb-4 block">
               <span className="mb-2 block text-sm font-bold text-slate-200">
-                Ten hien thi
+                Display Name
               </span>
               <input
                 type="text"
@@ -188,7 +227,7 @@ const Person = () => {
                 onChange={(event) => setProfileName(event.target.value)}
                 maxLength={32}
                 className="w-full rounded-lg border border-white/10 bg-white/10 px-4 py-2 text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-fuchsia-300"
-                placeholder="Nhap ten hien thi"
+                placeholder="Enter display name"
               />
             </label>
 
@@ -220,7 +259,7 @@ const Person = () => {
               onClick={handleSaveProfile}
               className="mt-4 w-full rounded-lg bg-fuchsia-300 px-4 py-3 text-sm font-black text-slate-950 transition hover:bg-fuchsia-200 disabled:cursor-wait disabled:opacity-70"
             >
-              {isSavingAvatar ? "Dang luu..." : "Luu thay doi"}
+              {isSavingAvatar ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>
