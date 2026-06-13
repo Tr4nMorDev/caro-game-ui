@@ -299,3 +299,72 @@ export const updateAvatar = async (token, avatar, name) => {
 
   return await response.json();
 };
+
+export const getServerChatMessages = async (token, limit = 50) => {
+  const response = await fetch(`${API_BASE_URL}/api/server-chat/messages?limit=${limit}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to load server chat");
+  }
+
+  return await response.json();
+};
+
+export const createServerChatMessage = async (token, content, type = "TEXT") => {
+  const response = await fetch(`${API_BASE_URL}/api/server-chat/messages`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ type, content }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to send server chat");
+  }
+
+  return await response.json();
+};
+
+export const createRoom = async (token) => {
+  const response = await fetch(`${API_BASE_URL}/rooms`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to create room");
+  }
+
+  return await response.json();
+};
+
+export const deleteRoom = async (token, roomCode) => {
+  const response = await fetch(`${API_BASE_URL}/rooms/${roomCode}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Failed to delete room");
+  }
+
+  return await response.json();
+};

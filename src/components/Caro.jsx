@@ -10,9 +10,13 @@ import {
   startMatchmaking,
   cancelMatchmaking,
   exitCurrentMatch,
-  startMatchWithAI
+  startMatchWithAI,
+  createRoom,
+  deleteRoom
 } from "../api/authApi";
 import PlayAIScreen from "./gamestatus/PlayAIScreen";
+import JoinRoomScreen from "./gamestatus/JoinRoomScreen";
+import RoomWaitingScreen from "./gamestatus/RoomWaitingScreen";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
 const Caro = () => {
@@ -27,6 +31,7 @@ const Caro = () => {
   const [matchedId, setmatchedId] = useState("");
   const [isWinner , setisWinner] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
+  const [roomCode, setRoomCode] = useState("");
   const [aiMatchData, setAiMatchData] = useState(null); // <-- Thêm state này
   const handleReplay = () => {
     // Reset game logic ở đây
@@ -183,10 +188,48 @@ const Caro = () => {
     setAiMatchData(result); // <-- Lưu match data
     setStatus("IN_GAME_AI");
   }
+  const handleCreateRoom = async () => {
+    try {
+      setisWinner(false);
+      const result = await createRoom(token);
+      setRoomCode(result.room.code);
+      setStatus("ROOM_WAITING");
+    } catch (error) {
+      console.error("Create room error:", error.message);
+      setToastMessage("Could not create room. Please try again.");
+    }
+  };
+
+  const handleCancelRoom = async () => {
+    const currentRoomCode = roomCode;
+
+    try {
+      if (currentRoomCode) {
+        await deleteRoom(token, currentRoomCode);
+      }
+    } catch (error) {
+      console.error("Leave room error:", error.message);
+    } finally {
+      setRoomCode("");
+      setStatus("IDLE");
+    }
+  };
+
+  const handleJoinRoom = () => {
+    setStatus("ROOM_JOIN");
+  };
+
   const renderScreen = () => {
     switch (status) {
       case "IDLE":
-        return <IdleScreen onFindMatch={handleFindMatch} onPlayCaro={onPlayCarowithAI} />;
+        return (
+          <IdleScreen
+            onFindMatch={handleFindMatch}
+            onPlayCaro={onPlayCarowithAI}
+            onCreateRoom={handleCreateRoom}
+            onJoinRoom={handleJoinRoom}
+          />
+        );
       case "MATCHING":
         return <MatchingScreen onCancel={handleCancelMatch} />;
       case "IN_GAME":
@@ -211,6 +254,10 @@ const Caro = () => {
         )
       case "IN_GAME_AI":
         return <PlayAIScreen onReplay={handleReplay} socket={aiSocketRef.current} data={aiMatchData} />;
+      case "ROOM_WAITING":
+        return <RoomWaitingScreen roomCode={roomCode} onCancel={handleCancelRoom} />;
+      case "ROOM_JOIN":
+        return <JoinRoomScreen onCancel={handleCancelRoom} />;
       default:
         return null;
     }

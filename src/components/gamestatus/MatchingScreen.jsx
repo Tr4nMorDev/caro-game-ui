@@ -1,9 +1,11 @@
 import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 
 const avatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.png`);
 
 const MatchingScreen = ({ onCancel }) => {
+  const { user } = useAuth();
   const [elapsed, setElapsed] = useState(0);
   const [localTime, setLocalTime] = useState(() => getTimeLabel());
 
@@ -30,13 +32,14 @@ const MatchingScreen = ({ onCancel }) => {
 
   const minutes = String(Math.floor(elapsed / 60)).padStart(2, "0");
   const seconds = String(elapsed % 60).padStart(2, "0");
+  const rankPoints = user?.rank?.points ?? 1000;
 
   return (
     <div className="cyber-matching-screen playgame-cyber-main h-full min-h-0">
       <div className="cyber-topline">
         <div className="flex items-center gap-5">
           <p>
-            <span className="text-lime-300">48</span> point rank
+            <span className="text-lime-300">{rankPoints.toLocaleString("en-US")}</span> point rank
           </p>
           <p>
             <span className="text-lime-300">matching</span> active

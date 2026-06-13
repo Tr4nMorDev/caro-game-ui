@@ -17,6 +17,7 @@ const Person = () => {
   const [profileName, setProfileName] = useState("");
   const [selectedAvatar, setSelectedAvatar] = useState("");
   const navigate = useNavigate();
+  const rankPoints = user?.rank?.points ?? 1000;
 
   const handleLogout = async () => {
     try {
@@ -77,7 +78,7 @@ const Person = () => {
         <div className="playgame-profile-summary space-y-4">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-2xl font-black text-lime-300">48</p>
+              <p className="text-2xl font-black text-lime-300">{rankPoints.toLocaleString("en-US")}</p>
               <p className="cyber-label -mt-1">point rank</p>
             </div>
             <div className="text-right">

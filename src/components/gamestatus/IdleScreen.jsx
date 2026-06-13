@@ -1,6 +1,8 @@
 import { ChevronRight } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
+import { ChatInput, ServerChat } from "./tab_chat/ServerChat";
 
 const tabs = ["Beginning", "Shop", "Server Chat", "Achievements", "Creations", "Games"];
 const shopItems = [
@@ -38,13 +40,15 @@ const shopItems = [
   },
 ];
 
-const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
+const IdleScreen = ({ onFindMatch, onPlayCaro, onCreateRoom, onJoinRoom }) => {
+  const { user } = useAuth();
   const [isVisible, setIsVisible] = useState(true);
   const [activeTab, setActiveTab] = useState("Beginning");
   const [selectedShopId, setSelectedShopId] = useState(shopItems[0].id);
   const [localTime, setLocalTime] = useState(() => getTimeLabel());
   const selectedShopItem =
     shopItems.find((item) => item.id === selectedShopId) || shopItems[0];
+  const rankPoints = user?.rank?.points ?? 1000;
 
   useEffect(() => {
     const timer = setInterval(() => setLocalTime(getTimeLabel()), 1000);
@@ -70,7 +74,7 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
             <div className="cyber-topline">
               <div className="flex items-center gap-5">
                 <p>
-                  <span className="text-lime-300">48</span> point rank
+                  <span className="text-lime-300">{rankPoints.toLocaleString("en-US")}</span> point rank
                 </p>
                 <p>
                   <span className="text-lime-300">1,425</span> coins awarded
@@ -142,14 +146,14 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
 
               <aside className="cyber-side-panel">
                 <div className="cyber-quest-panel">
-                  <div className="cyber-quest-title">Active Quest</div>
-                  <p className="cyber-label mt-4">quest name</p>
-                  <h2>React Website</h2>
+                  <div className="cyber-quest-title">Synthelytix</div>
+                  <p className="cyber-label mt-4">cyberpunk caro network</p>
+                  <h2>Play Caro Online Instantly</h2>
 
-                  <p className="cyber-label mt-5">goal</p>
+                  <p className="cyber-label mt-5">quick start</p>
                   <p className="cyber-body">
-                    Build this website. Implement a full react website with multiple
-                    routers, ui elements and rich styling.
+                    A cyberpunk online caro network for fast PvP matches, AI practice,
+                    and private rooms. No account required.
                   </p>
 
                   <p className="cyber-label mt-5">actions</p>
@@ -167,12 +171,12 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
                     <ActionButton
                       title="Create Room"
                       description="Open a private room for friends"
-                      onClick={() => console.log("Create room coming soon")}
+                      onClick={() => handleClick(onCreateRoom)}
                     />
                     <ActionButton
                       title="Join Room"
                       description="Enter a private room code"
-                      onClick={() => console.log("Join room coming soon")}
+                      onClick={() => handleClick(onJoinRoom)}
                     />
                   </div>
 
@@ -233,38 +237,6 @@ const ShopView = ({ items, selectedItem, onSelect }) => (
         </button>
       ))}
     </div>
-  </div>
-);
-
-const ServerChat = () => {
-  const messages = [
-    { name: "server", text: "Welcome to Synthelytix lobby." },
-    { name: "mortal", text: "Anyone up for a quick PvP test?" },
-    { name: "guest", text: "The new shop skins look clean." },
-  ];
-
-  return (
-    <section className="cyber-server-chat" aria-label="Server chat">
-      <div className="cyber-server-chat-header">
-        <div className="cyber-quest-title">Server Chat</div>
-        <p>Quick lobby messages with online players.</p>
-      </div>
-      <div className="cyber-server-chat-list">
-        {messages.map((message) => (
-          <div key={`${message.name}-${message.text}`} className="cyber-server-chat-message">
-            <span>{message.name}</span>
-            <p>{message.text}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
-};
-
-const ChatInput = () => (
-  <div className="cyber-server-chat-input">
-    <input type="text" placeholder="Type message..." aria-label="Server chat message" />
-    <button type="button">Send</button>
   </div>
 );
 
