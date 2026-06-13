@@ -36,7 +36,7 @@ const MatchingScreen = ({ onCancel }) => {
       <div className="cyber-topline">
         <div className="flex items-center gap-5">
           <p>
-            <span className="text-lime-300">48</span> level
+            <span className="text-lime-300">48</span> point rank
           </p>
           <p>
             <span className="text-lime-300">matching</span> active

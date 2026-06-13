@@ -1696,6 +1696,85 @@ select,
   background: rgba(239, 68, 68, 0.22);
 }
 
+.cyber-app-toast {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 80;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: min(92vw, 360px);
+  border: 1px solid rgba(248, 113, 113, 0.62);
+  background:
+    linear-gradient(90deg, rgba(127, 29, 29, 0.72), rgba(88, 28, 135, 0.56)),
+    rgba(2, 0, 10, 0.88);
+  box-shadow:
+    0 0 28px rgba(248, 113, 113, 0.16),
+    0 0 24px rgba(217, 70, 239, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  padding: 0.75rem 0.9rem;
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1.45;
+  text-transform: uppercase;
+  color: rgb(254, 226, 226);
+  backdrop-filter: blur(14px);
+  animation: cyber-toast-in 0.22s ease both;
+}
+
+.cyber-app-toast span {
+  flex: 1 1 auto;
+}
+
+.cyber-app-toast button {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(254, 202, 202, 0.28);
+  background: rgba(2, 0, 10, 0.38);
+  padding: 0.25rem;
+  color: rgb(254, 226, 226);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.cyber-app-toast button:hover {
+  border-color: rgba(254, 202, 202, 0.78);
+  background: rgba(248, 113, 113, 0.18);
+  color: white;
+}
+
+.cyber-app-toast-warning {
+  border-color: rgba(248, 113, 113, 0.62);
+}
+
+@media (max-width: 640px) {
+  .cyber-app-toast {
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100vw - 1.5rem);
+    font-size: 0.62rem;
+  }
+}
+
+@keyframes cyber-toast-in {
+  from {
+    opacity: 0;
+    transform: translate(14px, 8px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
 .cyber-result-screen {
   background:
     radial-gradient(circle at 50% 48%, rgba(217, 70, 239, 0.18), transparent 36%),

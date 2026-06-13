@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { X } from "lucide-react";
 import IdleScreen from "./gamestatus/IdleScreen";
 import InGameScreen from "./gamestatus/InGameScreen";
 import MatchingScreen from "./gamestatus/MatchingScreen";
@@ -19,11 +20,13 @@ const Caro = () => {
   const { user, token } = useAuth();
   const socketRef = useRef(null);
   const aiSocketRef = useRef(null);
+  const cancelAttemptsRef = useRef([]);
   const [players, setPlayers] = useState({ X: null, O: null });
   const [youAre, setYouAre] = useState(null); // "X" hoặc "O"
   const [opponentId, setopponentId] = useState("");
   const [matchedId, setmatchedId] = useState("");
   const [isWinner , setisWinner] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
   const [aiMatchData, setAiMatchData] = useState(null); // <-- Thêm state này
   const handleReplay = () => {
     // Reset game logic ở đây
@@ -139,6 +142,17 @@ const Caro = () => {
   };
 
   const handleCancelMatch = async () => {
+    const now = Date.now();
+    cancelAttemptsRef.current = [...cancelAttemptsRef.current, now].filter(
+      (timestamp) => now - timestamp <= 5000
+    );
+
+    if (cancelAttemptsRef.current.length >= 2) {
+      setToastMessage(
+        "Repeated queue cancels detected. We may restrict matchmaking for 30 seconds if you keep spamming."
+      );
+    }
+
     if (socketRef.current) {
       socketRef.current.disconnect();
       socketRef.current = null;
@@ -214,7 +228,19 @@ const Caro = () => {
   }
 
   return (
-    <section className="playgame-screen-fit w-full text-white">
+    <section className="playgame-screen-fit relative w-full text-white">
+      {toastMessage && (
+        <div className="cyber-app-toast cyber-app-toast-warning" role="status">
+          <span>{toastMessage}</span>
+          <button
+            type="button"
+            onClick={() => setToastMessage("")}
+            aria-label="Close notification"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
       {renderScreen()}
     </section>
   );

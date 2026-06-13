@@ -70,7 +70,7 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
             <div className="cyber-topline">
               <div className="flex items-center gap-5">
                 <p>
-                  <span className="text-lime-300">48</span> level
+                  <span className="text-lime-300">48</span> point rank
                 </p>
                 <p>
                   <span className="text-lime-300">1,425</span> coins awarded
@@ -163,6 +163,16 @@ const IdleScreen = ({ onFindMatch, onPlayCaro }) => {
                       title="Play With AI"
                       description="Practice on the 15x15 board"
                       onClick={() => handleClick(onPlayCaro)}
+                    />
+                    <ActionButton
+                      title="Create Room"
+                      description="Open a private room for friends"
+                      onClick={() => console.log("Create room coming soon")}
+                    />
+                    <ActionButton
+                      title="Join Room"
+                      description="Enter a private room code"
+                      onClick={() => console.log("Join room coming soon")}
                     />
                   </div>
 

@@ -78,7 +78,7 @@ const Person = () => {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-2xl font-black text-lime-300">48</p>
-              <p className="cyber-label -mt-1">level</p>
+              <p className="cyber-label -mt-1">point rank</p>
             </div>
             <div className="text-right">
               <p className="text-2xl font-black text-lime-300">1,425</p>
