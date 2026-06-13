@@ -7,7 +7,6 @@ import Gameend from "./gamestatus/Gameend"
 import { useAuth } from "../contexts/AuthContext";
 import { io, Socket } from "socket.io-client";
 import {
-  startMatchmaking,
   cancelMatchmaking,
   exitCurrentMatch,
   startMatchWithAI,
@@ -135,11 +134,9 @@ const Caro = () => {
     }
   }, [status]);
 
-  const handleFindMatch = async () => {
+  const handleFindMatch = () => {
     try {
       setisWinner(false);
-      const result = await startMatchmaking(token);
-      console.log("Matchmaking started:", result);
       setStatus("MATCHING");
     } catch (err) {
       console.error("Lỗi khi gửi yêu cầu tìm trận:", err);
