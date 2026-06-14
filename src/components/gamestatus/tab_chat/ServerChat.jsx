@@ -12,32 +12,8 @@ const stickers = {
   },
 };
 
-const previewMessages = [
-  { name: "server", avatar: "/chibi/1.png", text: "Welcome to Synthelytix lobby." },
-  { name: "mortal", avatar: "/chibi/2.png", text: "Anyone up for a quick PvP test?" },
-  { name: "guest-sticker", avatar: "/chibi/3.png", type: "EMOTE", content: "demo-sticker" },
-  { name: "guest-a91", avatar: "/chibi/3.png", text: "The new shop skins look clean." },
-  { name: "neonfox", avatar: "/chibi/4.png", text: "Need one more player for a fast match." },
-  { name: "cyberkid", avatar: "/chibi/5.png", text: "GG, that last game ended in 5 minutes." },
-  { name: "luna", avatar: "/chibi/1.png", text: "Does anyone want to test create room?" },
-  { name: "kaito", avatar: "/chibi/2.png", text: "I am queueing PvP now." },
-  { name: "guest-f42", avatar: "/chibi/3.png", text: "Mobile layout feels better after the update." },
-  { name: "nova", avatar: "/chibi/4.png", text: "AI mode is still under tuning, right?" },
-  { name: "admin", avatar: "/chibi/5.png", text: "Keep chat clean and report bugs via feedback mail." },
-  { name: "akira", avatar: "/chibi/1.png", text: "Rank board needs more real players soon." },
-  { name: "zero", avatar: "/chibi/2.png", text: "I like the purple cyber UI." },
-  { name: "guest-b77", avatar: "/chibi/3.png", text: "Waiting for opponent..." },
-  { name: "mika", avatar: "/chibi/4.png", text: "Who is testing from Zalo campaign?" },
-  { name: "shadow", avatar: "/chibi/5.png", text: "Create room feature will be useful for friends." },
-  { name: "rin", avatar: "/chibi/1.png", text: "Can we add emotes later?" },
-  { name: "byte", avatar: "/chibi/2.png", text: "Server latency looks stable today." },
-  { name: "guest-c08", avatar: "/chibi/3.png", text: "I just joined from console login." },
-  { name: "iris", avatar: "/chibi/4.png", text: "Shop frames would look good around avatars." },
-  { name: "server", avatar: "/chibi/5.png", text: "Patch notes: server chat UI preview is online." },
-];
-
 const normalizeMessage = (message) => ({
-  id: message.id || `${message.name}-${message.text}`,
+  id: message.id || `${message.user?.id || message.name}-${message.createdAt || message.text}`,
   name: message.user?.name || message.name || "player",
   avatar: message.user?.avatar || message.avatar || "/chibi/1.png",
   type: message.type || "TEXT",
@@ -49,7 +25,9 @@ export const ServerChat = () => {
   const { token } = useAuth();
   const socketRef = useRef(null);
   const listRef = useRef(null);
-  const [messages, setMessages] = useState(previewMessages);
+  const [messages, setMessages] = useState([]);
+  const [isLoading, setIsLoading] = useState(Boolean(token));
+  const [loadError, setLoadError] = useState("");
 
   const renderedMessages = useMemo(
     () => messages.map((message) => normalizeMessage(message)),
@@ -57,20 +35,28 @@ export const ServerChat = () => {
   );
 
   useEffect(() => {
-    if (!token) return;
+    if (!token) {
+      setMessages([]);
+      setIsLoading(false);
+      setLoadError("");
+      return;
+    }
 
     let isActive = true;
 
     const loadMessages = async () => {
       try {
+        setIsLoading(true);
+        setLoadError("");
         const data = await getServerChatMessages(token, 50);
         if (!isActive) return;
 
-        if (Array.isArray(data.messages) && data.messages.length > 0) {
-          setMessages(data.messages);
-        }
+        setMessages(Array.isArray(data.messages) ? data.messages : []);
       } catch (error) {
         console.error("Failed to load server chat", error);
+        if (isActive) setLoadError("Failed to load server chat.");
+      } finally {
+        if (isActive) setIsLoading(false);
       }
     };
 
@@ -120,27 +106,53 @@ export const ServerChat = () => {
         <p>Quick lobby messages with online players.</p>
       </div>
       <div ref={listRef} className="cyber-server-chat-list">
-        {renderedMessages.map((message) => (
-          <div key={message.id} className="cyber-server-chat-message">
-            <img src={message.avatar} alt={`${message.name} avatar`} />
+        {isLoading ? (
+          <div className="cyber-server-chat-message">
+            <img src="/chibi/1.png" alt="Loading chat" />
             <div>
-              <span>{message.name}</span>
-              {message.type === "EMOTE" && message.sticker ? (
-                <video
-                  className="cyber-server-chat-sticker"
-                  src={message.sticker.src}
-                  aria-label={message.sticker.label}
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                />
-              ) : (
-                <p>{message.text}</p>
-              )}
+              <span>server</span>
+              <p>Loading live messages...</p>
             </div>
           </div>
-        ))}
+        ) : loadError ? (
+          <div className="cyber-server-chat-message">
+            <img src="/chibi/1.png" alt="Chat error" />
+            <div>
+              <span>server</span>
+              <p>{loadError}</p>
+            </div>
+          </div>
+        ) : renderedMessages.length === 0 ? (
+          <div className="cyber-server-chat-message">
+            <img src="/chibi/1.png" alt="Empty chat" />
+            <div>
+              <span>server</span>
+              <p>No messages yet. Start the lobby chat.</p>
+            </div>
+          </div>
+        ) : (
+          renderedMessages.map((message) => (
+            <div key={message.id} className="cyber-server-chat-message">
+              <img src={message.avatar} alt={`${message.name} avatar`} />
+              <div>
+                <span>{message.name}</span>
+                {message.type === "EMOTE" && message.sticker ? (
+                  <video
+                    className="cyber-server-chat-sticker"
+                    src={message.sticker.src}
+                    aria-label={message.sticker.label}
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                  />
+                ) : (
+                  <p>{message.text}</p>
+                )}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </section>
   );
