@@ -61,11 +61,8 @@ const Caro = () => {
       });
 
       socket.on("matched", (matchData) => {
-        console.log("🎯 Matched:", matchData);
         const { playerXId, playerOId, id } = matchData;
         const opponentId = user.id === playerXId ? playerOId : playerXId;
-        console.log("ID doi thu :", opponentId);
-        console.log("Id tran game :", id);
         setPlayers(matchData.players);
         setYouAre(matchData.youAre);
         setopponentId(opponentId);
@@ -75,7 +72,6 @@ const Caro = () => {
       });
       
       socket.on("timeout", () => {
-        console.log("⏰ Timeout");
         socket.emit("timeout" , user.id);
         setStatus("IDLE"); // sẽ bị disconnect ở useEffect dưới
       });
@@ -123,7 +119,6 @@ const Caro = () => {
   // 🔌 Cleanup chỉ khi chuyển về IDLE
   useEffect(() => {
     if (status === "IDLE" && socketRef.current) {
-      console.log("🧹 Disconnecting socket");
       socketRef.current.disconnect();
       socketRef.current = null;
     }

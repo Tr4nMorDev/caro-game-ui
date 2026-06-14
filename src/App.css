@@ -1126,6 +1126,20 @@ select,
   color: white;
 }
 
+.cyber-tab-row button.cyber-tab-disabled {
+  cursor: not-allowed;
+  filter: blur(0.35px) grayscale(0.4);
+  opacity: 0.35;
+}
+
+.cyber-tab-row button.cyber-tab-disabled:hover {
+  border-color: rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(110deg, rgba(255, 255, 255, 0.08), rgba(0, 0, 0, 0.36)),
+    rgba(0, 0, 0, 0.26);
+  color: rgba(226, 232, 240, 0.8);
+}
+
 .cyber-shop-view {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) 74px;
@@ -1544,6 +1558,20 @@ select,
   transform: translateX(2px);
   border-color: rgba(244, 114, 182, 0.9);
   background: rgba(217, 70, 239, 0.23);
+}
+
+.cyber-action-button.cyber-action-disabled,
+.cyber-action-button:disabled {
+  cursor: not-allowed;
+  filter: blur(0.45px) grayscale(0.35);
+  opacity: 0.38;
+}
+
+.cyber-action-button.cyber-action-disabled:hover,
+.cyber-action-button:disabled:hover {
+  transform: none;
+  border-color: rgba(217, 70, 239, 0.45);
+  background: rgba(217, 70, 239, 0.11);
 }
 
 .cyber-action-button strong {

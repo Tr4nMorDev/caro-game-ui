@@ -5,6 +5,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import { ChatInput, ServerChat } from "./tab_chat/ServerChat";
 
 const tabs = ["Beginning", "Shop", "Server Chat", "Achievements", "Creations", "Games"];
+const disabledTabs = new Set(["Shop", "Achievements", "Creations", "Games"]);
 const shopItems = [
   {
     id: "nebula-frame",
@@ -125,8 +126,18 @@ const IdleScreen = ({ onFindMatch, onPlayCaro, onCreateRoom, onJoinRoom }) => {
                       <button
                         key={tab}
                         type="button"
-                        onClick={() => setActiveTab(tab)}
-                        className={activeTab === tab ? "cyber-tab-active" : ""}
+                        onClick={() => {
+                          if (!disabledTabs.has(tab)) setActiveTab(tab);
+                        }}
+                        disabled={disabledTabs.has(tab)}
+                        aria-disabled={disabledTabs.has(tab)}
+                        title={disabledTabs.has(tab) ? "Coming soon" : undefined}
+                        className={[
+                          activeTab === tab ? "cyber-tab-active" : "",
+                          disabledTabs.has(tab) ? "cyber-tab-disabled" : "",
+                        ]
+                          .filter(Boolean)
+                          .join(" ")}
                       >
                         <span>{tab}</span>
                         <small>
@@ -165,18 +176,21 @@ const IdleScreen = ({ onFindMatch, onPlayCaro, onCreateRoom, onJoinRoom }) => {
                     />
                     <ActionButton
                       title="Play With AI"
-                      description="Practice on the 15x15 board"
+                      description="Coming soon"
                       onClick={() => handleClick(onPlayCaro)}
+                      disabled
                     />
                     <ActionButton
                       title="Create Room"
-                      description="Open a private room for friends"
+                      description="Coming soon"
                       onClick={() => handleClick(onCreateRoom)}
+                      disabled
                     />
                     <ActionButton
                       title="Join Room"
-                      description="Enter a private room code"
+                      description="Coming soon"
                       onClick={() => handleClick(onJoinRoom)}
+                      disabled
                     />
                   </div>
 
@@ -195,8 +209,15 @@ const IdleScreen = ({ onFindMatch, onPlayCaro, onCreateRoom, onJoinRoom }) => {
   );
 };
 
-const ActionButton = ({ title, description, onClick }) => (
-  <button type="button" onClick={onClick} className="cyber-action-button">
+const ActionButton = ({ title, description, onClick, disabled = false }) => (
+  <button
+    type="button"
+    onClick={disabled ? undefined : onClick}
+    disabled={disabled}
+    aria-disabled={disabled}
+    title={disabled ? "Coming soon" : undefined}
+    className={`cyber-action-button${disabled ? " cyber-action-disabled" : ""}`}
+  >
     <span>
       <strong>{title}</strong>
       <small>{description}</small>
