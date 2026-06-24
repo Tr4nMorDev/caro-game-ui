@@ -186,15 +186,13 @@ const IdleScreen = ({ onFindMatch, onPlayCaro, onCreateRoom, onJoinRoom }) => {
                     />
                     <ActionButton
                       title="Create Room"
-                      description="Coming soon"
+                      description="Host a private match"
                       onClick={() => handleClick(onCreateRoom)}
-                      disabled
                     />
                     <ActionButton
                       title="Join Room"
-                      description="Coming soon"
+                      description="Enter a room code"
                       onClick={() => handleClick(onJoinRoom)}
-                      disabled
                     />
                   </div>
 

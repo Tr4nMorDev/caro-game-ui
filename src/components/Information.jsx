@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { googleLogin, signup } from "../api/authApi";
 import { useAuth } from "../contexts/AuthContext";
 import { useAudio } from "../contexts/AudioContext";
+import { trackEvent } from "../utils/tracking";
 // import { trackGoogleLogin } from "../api/authApi";
 // import { getTrackingContext } from "../utils/tracking";
 
@@ -38,10 +39,15 @@ const Information = () => {
 
     try {
       setIsGuestLoading(true);
+      trackEvent("guest_login_start");
       const result = await signup(guestData);
       login({ token: result.token, user: result.user });
+      trackEvent("guest_login_success");
       navigate("/gameplay");
     } catch (error) {
+      trackEvent("guest_login_failed", {
+        error_message: error.message,
+      });
       console.error("Guest login error:", error.message);
     } finally {
       setIsGuestLoading(false);
@@ -52,6 +58,7 @@ const Information = () => {
     try {
       const result = await googleLogin(credentialResponse.credential);
       login({ token: result.token, user: result.user });
+      trackEvent("google_login_success");
 
       // Google login tracking disabled.
       // try {
@@ -65,11 +72,17 @@ const Information = () => {
 
       navigate("/gameplay");
     } catch (error) {
+      trackEvent("google_login_failed", {
+        error_message: error.message,
+      });
       console.error("Google login error:", error.message);
     }
   };
 
   const handleGoogleLoginError = () => {
+    trackEvent("google_login_failed", {
+      error_message: "oauth_client_error",
+    });
     console.error("Google OAuth failed");
   };
 

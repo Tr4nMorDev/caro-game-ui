@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { signout, updateAvatar } from "../api/authApi";
 import { useAudio } from "../contexts/AudioContext";
 import { useAuth } from "../contexts/AuthContext";
+import { trackEvent } from "../utils/tracking";
 
 const chibiAvatars = [1, 2, 3, 4, 5].map((id) => ({
   image: `/chibi/${id}.webp`,
@@ -53,8 +54,15 @@ const Person = () => {
       setIsSavingAvatar(true);
       const result = await updateAvatar(token, selectedAvatar, profileName);
       updateUser(result.user);
+      trackEvent("profile_update_success", {
+        avatar_changed: selectedAvatar !== user?.avatar,
+        name_changed: profileName.trim() !== (user?.name || ""),
+      });
       setIsAvatarPickerOpen(false);
     } catch (error) {
+      trackEvent("profile_update_failed", {
+        error_message: error.message,
+      });
       console.error("Update profile error:", error.message);
     } finally {
       setIsSavingAvatar(false);

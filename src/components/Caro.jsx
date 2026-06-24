@@ -16,6 +16,7 @@ import {
 import PlayAIScreen from "./gamestatus/PlayAIScreen";
 import JoinRoomScreen from "./gamestatus/JoinRoomScreen";
 import RoomWaitingScreen from "./gamestatus/RoomWaitingScreen";
+import { trackEvent } from "../utils/tracking";
 
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || "http://localhost:3000";
 const Caro = () => {
@@ -67,12 +68,18 @@ const Caro = () => {
         setYouAre(matchData.youAre);
         setopponentId(opponentId);
         setmatchedId(id);
+        trackEvent("match_found", {
+          mode: "pvp",
+        });
         setStatus("IN_GAME"); // vẫn giữ socketRef
         
       });
       
       socket.on("timeout", () => {
         socket.emit("timeout" , user.id);
+        trackEvent("matchmaking_timeout", {
+          mode: "pvp",
+        });
         setStatus("IDLE"); // sẽ bị disconnect ở useEffect dưới
       });
 
@@ -94,6 +101,11 @@ const Caro = () => {
         console.log("Game end payload winnerId:", winnerId);
         console.log("Current user id:", currentUserId);
         console.log("Did win:", didWin);
+        trackEvent("game_end", {
+          mode: "pvp",
+          result: didWin ? "win" : "lose",
+          reason: gameEndPayload?.reason || "unknown",
+        });
         setisWinner(didWin);
         setStatus("WINER");
       })
@@ -132,6 +144,9 @@ const Caro = () => {
   const handleFindMatch = () => {
     try {
       setisWinner(false);
+      trackEvent("matchmaking_start", {
+        mode: "pvp",
+      });
       setStatus("MATCHING");
     } catch (err) {
       console.error("Lỗi khi gửi yêu cầu tìm trận:", err);
@@ -154,6 +169,9 @@ const Caro = () => {
       socketRef.current.disconnect();
       socketRef.current = null;
     }
+    trackEvent("matchmaking_cancel", {
+      mode: "pvp",
+    });
     setStatus("IDLE");
 
     try {
@@ -170,11 +188,17 @@ const Caro = () => {
   };
   const onExitGame = async () => {
     const result = await exitCurrentMatch(token);
+    trackEvent("game_exit", {
+      mode: "pvp",
+    });
     console.log("✅ Exit game:", result);
     setStatus("IDLE");
   };
   const onPlayCarowithAI = async () => {
     setisWinner(false);
+    trackEvent("game_start", {
+      mode: "ai",
+    });
     const result = await startMatchWithAI(token);
     console.log("đã khởi tạo màn chơi" , result);
     setAiMatchData(result); // <-- Lưu match data
