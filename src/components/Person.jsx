@@ -5,7 +5,15 @@ import { signout, updateAvatar } from "../api/authApi";
 import { useAudio } from "../contexts/AudioContext";
 import { useAuth } from "../contexts/AuthContext";
 
-const chibiAvatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.webp`);
+const chibiAvatars = [1, 2, 3, 4, 5].map((id) => ({
+  image: `/chibi/${id}.webp`,
+  value: `/chibi/${id}.png`,
+}));
+
+const getAvatarImageSrc = (avatar) => {
+  const chibiMatch = avatar?.match(/^\/chibi\/([1-5])\.png$/);
+  return chibiMatch ? `/chibi/${chibiMatch[1]}.webp` : avatar;
+};
 
 const Person = () => {
   const { user, isAuthenticated, logout, token, updateUser } = useAuth();
@@ -34,7 +42,7 @@ const Person = () => {
 
   const openAvatarPicker = () => {
     setProfileName(user?.name || "");
-    setSelectedAvatar(user?.avatar || chibiAvatars[0]);
+    setSelectedAvatar(user?.avatar || chibiAvatars[0].value);
     setIsAvatarPickerOpen(true);
   };
 
@@ -95,7 +103,7 @@ const Person = () => {
           >
             {user.avatar ? (
               <img
-                src={user.avatar}
+                src={getAvatarImageSrc(user.avatar)}
                 alt={user.name || "Player"}
                 decoding="async"
                 className="aspect-square w-full object-cover transition group-hover:brightness-110"
@@ -236,18 +244,18 @@ const Person = () => {
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
               {chibiAvatars.map((avatar) => (
                 <button
-                  key={avatar}
+                  key={avatar.value}
                   type="button"
                   disabled={isSavingAvatar}
-                  onClick={() => setSelectedAvatar(avatar)}
+                  onClick={() => setSelectedAvatar(avatar.value)}
                   className={`rounded-xl border p-2 transition hover:-translate-y-1 hover:border-fuchsia-300 hover:bg-white/10 disabled:cursor-wait disabled:opacity-70 ${
-                    selectedAvatar === avatar
+                    selectedAvatar === avatar.value
                       ? "border-fuchsia-300 bg-fuchsia-300/15"
                       : "border-white/10 bg-white/5"
                   }`}
                 >
                   <img
-                    src={avatar}
+                    src={avatar.image}
                     alt="Chibi avatar"
                     loading="lazy"
                     decoding="async"
