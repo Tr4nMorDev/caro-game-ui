@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 
 const size = 20;
 
@@ -53,19 +53,23 @@ const InGameScreen = ({
     return () => socket.off("moveMade", handleMoveMade);
   }, [socket]);
 
-  const handleClick = (index) => {
-    if (!socket || !currentTurn || board[index] !== null || currentTurn !== youAre) {
+  const handleClick = useCallback((index) => {
+    if (!socket || !currentTurn || currentTurn !== youAre) {
       return;
     }
 
     setBoard((previousBoard) => {
+      if (previousBoard[index] !== null) {
+        return previousBoard;
+      }
+
       const newBoard = [...previousBoard];
       newBoard[index] = youAre;
       return newBoard;
     });
 
     socket.emit("makeMove", { matchId, index, symbol: youAre });
-  };
+  }, [currentTurn, matchId, socket, youAre]);
 
   return (
     <div className="cyber-game-screen playgame-cyber-main h-full min-h-0">
@@ -106,23 +110,12 @@ const InGameScreen = ({
 
           <div className="cyber-game-board-scroll">
             <div className="caro-board-shell playgame-board-wrap cyber-game-board-shell">
-              <div
-                className="caro-board-grid"
-                style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
-              >
-                {board.map((cell, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => handleClick(index)}
-                    className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
-                    disabled={board[index] !== null || currentTurn !== youAre}
-                  >
-                    {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
-                    {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
-                  </button>
-                ))}
-              </div>
+              <BoardGrid
+                board={board}
+                size={size}
+                isInteractive={currentTurn === youAre}
+                onCellClick={handleClick}
+              />
             </div>
           </div>
         </section>
@@ -155,6 +148,7 @@ const PlayerPanel = ({ player, symbol, timer, active, align }) => (
     <img
       src={player?.avatar}
       alt={player?.name || "Player"}
+      decoding="async"
       className="h-10 w-10 rounded-md border border-fuchsia-200/25 object-cover shadow-lg shadow-purple-950/20"
     />
     <div className={`min-w-0 ${align === "right" ? "sm:text-right" : ""}`}>
@@ -168,6 +162,39 @@ const PlayerPanel = ({ player, symbol, timer, active, align }) => (
     {align !== "right" && <SymbolBadge symbol={symbol} />}
   </div>
 );
+
+const BoardGrid = memo(({ board, size, isInteractive, onCellClick }) => (
+  <div
+    className="caro-board-grid"
+    style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+  >
+    {board.map((cell, index) => (
+      <CaroCell
+        key={index}
+        cell={cell}
+        index={index}
+        disabled={cell !== null || !isInteractive}
+        onCellClick={onCellClick}
+      />
+    ))}
+  </div>
+));
+
+BoardGrid.displayName = "BoardGrid";
+
+const CaroCell = memo(({ cell, index, disabled, onCellClick }) => (
+  <button
+    type="button"
+    onClick={() => onCellClick(index)}
+    className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
+    disabled={disabled}
+  >
+    {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
+    {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
+  </button>
+));
+
+CaroCell.displayName = "CaroCell";
 
 const SymbolBadge = ({ symbol }) => (
   <span

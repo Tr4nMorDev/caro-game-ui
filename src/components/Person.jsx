@@ -5,7 +5,7 @@ import { signout, updateAvatar } from "../api/authApi";
 import { useAudio } from "../contexts/AudioContext";
 import { useAuth } from "../contexts/AuthContext";
 
-const chibiAvatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.png`);
+const chibiAvatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.webp`);
 
 const Person = () => {
   const { user, isAuthenticated, logout, token, updateUser } = useAuth();
@@ -97,6 +97,7 @@ const Person = () => {
               <img
                 src={user.avatar}
                 alt={user.name || "Player"}
+                decoding="async"
                 className="aspect-square w-full object-cover transition group-hover:brightness-110"
               />
             ) : (
@@ -248,6 +249,8 @@ const Person = () => {
                   <img
                     src={avatar}
                     alt="Chibi avatar"
+                    loading="lazy"
+                    decoding="async"
                     className="aspect-square w-full rounded-lg object-cover"
                   />
                 </button>

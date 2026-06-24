@@ -20,6 +20,11 @@ body {
   font-family: "Iceberg", sans-serif;
 }
 
+.route-fallback {
+  min-height: 100dvh;
+  background: #030012;
+}
+
 * {
   font-family: "Iceberg", sans-serif !important;
 }

@@ -2,7 +2,7 @@ import { X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 
-const avatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.png`);
+const avatars = [1, 2, 3, 4, 5].map((id) => `/chibi/${id}.webp`);
 
 const MatchingScreen = ({ onCancel }) => {
   const { user } = useAuth();
@@ -132,7 +132,7 @@ const MatchingScreen = ({ onCancel }) => {
 
 const AvatarNode = ({ item }) => (
   <div className="cyber-avatar-node">
-    <img src={item.avatar} alt={item.label} />
+    <img src={item.avatar} alt={item.label} loading="lazy" decoding="async" />
     <span>{item.label}</span>
   </div>
 );

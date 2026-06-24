@@ -6,11 +6,11 @@ import * as random from "maath/random/dist/maath-random.esm";
 const StarBackground = (props) => {
   const ref = useRef();
   const [sphere] = useState(() =>
-    random.inSphere(new Float32Array(9000), { radius: 1.5 })
+    random.inSphere(new Float32Array(6000), { radius: 1.5 })
   );
 
   useFrame((state, delta) => {
-    if (ref.current) {
+    if (ref.current && !document.hidden) {
       ref.current.rotation.x -= delta / 15;
       ref.current.rotation.y -= delta / 20;
     }
@@ -42,7 +42,11 @@ const StarsCanvas = () => (
       pointerEvents: "none", // thêm dòng này
     }}
   >
-    <Canvas camera={{ position: [0, 0, 1] }}>
+    <Canvas
+      camera={{ position: [0, 0, 1] }}
+      dpr={[1, 1.5]}
+      gl={{ antialias: false, powerPreference: "low-power" }}
+    >
       <Suspense fallback={null}>
         <StarBackground />
       </Suspense>

@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 
 const waitingNodes = [1, 2, 3, 4, 5, 1, 2, 3].map((id, index) => ({
   id: `waiting-node-${index}`,
-  avatar: `/chibi/${id}.png`,
+  avatar: `/chibi/${id}.webp`,
 }));
 
 const RoomWaitingScreen = ({ roomCode, onCancel }) => {
@@ -64,7 +64,7 @@ const RoomWaitingScreen = ({ roomCode, onCancel }) => {
           <div className="cyber-room-waiting-lane" aria-label="Waiting players">
             {waitingNodes.map((node) => (
               <div key={node.id} className="cyber-room-waiting-node">
-                <img src={node.avatar} alt="Waiting player avatar" />
+                <img src={node.avatar} alt="Waiting player avatar" loading="lazy" decoding="async" />
               </div>
             ))}
           </div>

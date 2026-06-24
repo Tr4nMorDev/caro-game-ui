@@ -13,7 +13,7 @@ const shopItems = [
     eyebrow: "Cosmetic item",
     description: "A soft purple avatar frame for cyber-style players.",
     price: "250 coins",
-    image: "/main/1.png",
+    image: "/main/1.webp",
   },
   {
     id: "chibi-scout",
@@ -21,7 +21,7 @@ const shopItems = [
     eyebrow: "Avatar pack",
     description: "A compact chibi avatar pack built for mobile profiles.",
     price: "180 coins",
-    image: "/chibi/1.png",
+    image: "/chibi/1.webp",
   },
   {
     id: "chibi-guardian",
@@ -29,7 +29,7 @@ const shopItems = [
     eyebrow: "Avatar pack",
     description: "A defensive avatar pack for steady caro players.",
     price: "220 coins",
-    image: "/chibi/2.png",
+    image: "/chibi/2.webp",
   },
   {
     id: "rank-boost",
@@ -37,7 +37,7 @@ const shopItems = [
     eyebrow: "Profile effect",
     description: "A glowing title effect for your leaderboard badge.",
     price: "320 coins",
-    image: "/chibi/3.png",
+    image: "/chibi/3.webp",
   },
 ];
 
@@ -112,7 +112,11 @@ const IdleScreen = ({ onFindMatch, onPlayCaro, onCreateRoom, onJoinRoom }) => {
                       </div>
 
                       <div className="cyber-image-frame">
-                        <img src="/main/1.png" alt="Purple cyber whale caro artwork" />
+                        <img
+                          src="/main/1.webp"
+                          alt="Purple cyber whale caro artwork"
+                          decoding="async"
+                        />
                       </div>
                     </>
                   )}
@@ -235,7 +239,7 @@ const ShopView = ({ items, selectedItem, onSelect }) => (
     </div>
 
     <div className="cyber-shop-stage">
-      <img src={selectedItem.image} alt={selectedItem.title} />
+      <img src={selectedItem.image} alt={selectedItem.title} decoding="async" />
       <div className="cyber-shop-price">
         <span>Price</span>
         <strong>{selectedItem.price}</strong>
@@ -250,7 +254,7 @@ const ShopView = ({ items, selectedItem, onSelect }) => (
           onClick={() => onSelect(item.id)}
           className={selectedItem.id === item.id ? "cyber-shop-card-active" : ""}
         >
-          <img src={item.image} alt={item.title} />
+          <img src={item.image} alt={item.title} loading="lazy" decoding="async" />
           <span>
             <strong>{item.title}</strong>
             <small>{item.price}</small>

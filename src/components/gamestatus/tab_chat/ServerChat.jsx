@@ -15,7 +15,7 @@ const stickers = {
 const normalizeMessage = (message) => ({
   id: message.id || `${message.user?.id || message.name}-${message.createdAt || message.text}`,
   name: message.user?.name || message.name || "player",
-  avatar: message.user?.avatar || message.avatar || "/chibi/1.png",
+  avatar: message.user?.avatar || message.avatar || "/chibi/1.webp",
   type: message.type || "TEXT",
   sticker: stickers[message.content],
   text: message.content || message.text || "",
@@ -108,7 +108,7 @@ export const ServerChat = () => {
       <div ref={listRef} className="cyber-server-chat-list">
         {isLoading ? (
           <div className="cyber-server-chat-message">
-            <img src="/chibi/1.png" alt="Loading chat" />
+            <img src="/chibi/1.webp" alt="Loading chat" decoding="async" />
             <div>
               <span>server</span>
               <p>Loading live messages...</p>
@@ -116,7 +116,7 @@ export const ServerChat = () => {
           </div>
         ) : loadError ? (
           <div className="cyber-server-chat-message">
-            <img src="/chibi/1.png" alt="Chat error" />
+            <img src="/chibi/1.webp" alt="Chat error" decoding="async" />
             <div>
               <span>server</span>
               <p>{loadError}</p>
@@ -124,7 +124,7 @@ export const ServerChat = () => {
           </div>
         ) : renderedMessages.length === 0 ? (
           <div className="cyber-server-chat-message">
-            <img src="/chibi/1.png" alt="Empty chat" />
+            <img src="/chibi/1.webp" alt="Empty chat" decoding="async" />
             <div>
               <span>server</span>
               <p>No messages yet. Start the lobby chat.</p>
@@ -133,7 +133,7 @@ export const ServerChat = () => {
         ) : (
           renderedMessages.map((message) => (
             <div key={message.id} className="cyber-server-chat-message">
-              <img src={message.avatar} alt={`${message.name} avatar`} />
+              <img src={message.avatar} alt={`${message.name} avatar`} loading="lazy" decoding="async" />
               <div>
                 <span>{message.name}</span>
                 {message.type === "EMOTE" && message.sticker ? (

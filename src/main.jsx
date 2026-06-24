@@ -1,18 +1,35 @@
-import { StrictMode } from "react";
+import { StrictMode, Suspense, lazy, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import AppLayout from "./AppLayout.jsx"; // Tạo mới
-import BackgroundFirst from "./components/BackgroundFirst";
-import StarsCanvas from "./sub/StarBackground.jsx";
-import SignupPage from "./page/SignupPage.jsx";
-import SigninPage from "./page/SigninPage.jsx";
 import "./App.css";
-import GameLayout from "./page/GameLayout.jsx";
 import { AudioProvider } from "./contexts/AudioContext.jsx";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const BackgroundFirst = lazy(() => import("./components/BackgroundFirst"));
+const StarsCanvas = lazy(() => import("./sub/StarBackground.jsx"));
+const SignupPage = lazy(() => import("./page/SignupPage.jsx"));
+const SigninPage = lazy(() => import("./page/SigninPage.jsx"));
+const GameLayout = lazy(() => import("./page/GameLayout.jsx"));
 
+const RouteFallback = () => <div className="route-fallback" aria-label="Loading" />;
+
+const DeferredStarsCanvas = () => {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    const scheduleIdle = window.requestIdleCallback || ((callback) => window.setTimeout(callback, 350));
+    const cancelIdle = window.cancelIdleCallback || window.clearTimeout;
+    const idleId = scheduleIdle(() => setIsReady(true));
+
+    return () => cancelIdle(idleId);
+  }, []);
+
+  if (!isReady) return null;
+
+  return <StarsCanvas />;
+};
 
 const router = createBrowserRouter(
   [
@@ -23,27 +40,43 @@ const router = createBrowserRouter(
         {
           index: true,
           element: (
-            <>
+            <Suspense fallback={<RouteFallback />}>
               <BackgroundFirst />
-              <StarsCanvas />
-            </>
+              <DeferredStarsCanvas />
+            </Suspense>
           ),
         },
         {
           path: "signup",
-          element: <SignupPage />,
+          element: (
+            <Suspense fallback={<RouteFallback />}>
+              <SignupPage />
+            </Suspense>
+          ),
         },
         {
           path: "signin",
-          element: <SigninPage />,
+          element: (
+            <Suspense fallback={<RouteFallback />}>
+              <SigninPage />
+            </Suspense>
+          ),
         },
         {
           path: "gameplay",
-          element: <GameLayout />,
+          element: (
+            <Suspense fallback={<RouteFallback />}>
+              <GameLayout />
+            </Suspense>
+          ),
         },
         {
           path: "playgame",
-          element: <GameLayout />,
+          element: (
+            <Suspense fallback={<RouteFallback />}>
+              <GameLayout />
+            </Suspense>
+          ),
         },
       ],
     },

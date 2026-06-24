@@ -1,5 +1,5 @@
 import { Bot, UserRound } from "lucide-react";
-import { useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { OutPlayWithAI } from "../../api/authApi";
 import { useAuth } from "../../contexts/AuthContext";
 
@@ -67,15 +67,15 @@ const PlayAIScreen = ({ onReplay, socket, data }) => {
     return () => socket.off("AImove", handleMoveMade);
   }, [socket]);
 
-  const handleClick = (index) => {
+  const handleClick = useCallback((index) => {
     if (!socket || board[index] || gameOver || currentTurn !== "X") return;
 
-    const newBoard = [...board];
-    newBoard[index] = "X";
-    setBoard(newBoard);
+    const nextBoard = [...board];
+    nextBoard[index] = "X";
+    setBoard(nextBoard);
     setCurrentTurn("O");
-    socket.emit("move", { index, board: newBoard });
-  };
+    socket.emit("move", { index, board: nextBoard });
+  }, [board, currentTurn, gameOver, socket]);
 
   return (
     <div className="cyber-game-screen playgame-cyber-main h-full min-h-0">
@@ -117,23 +117,12 @@ const PlayAIScreen = ({ onReplay, socket, data }) => {
 
           <div className="cyber-game-board-scroll">
             <div className="caro-board-shell playgame-board-wrap-ai cyber-game-board-shell">
-              <div
-                className="caro-board-grid"
-                style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
-              >
-                {board.map((cell, index) => (
-                  <button
-                    key={index}
-                    type="button"
-                    onClick={() => handleClick(index)}
-                    className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
-                    disabled={Boolean(cell) || gameOver || currentTurn !== "X"}
-                  >
-                    {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
-                    {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
-                  </button>
-                ))}
-              </div>
+              <BoardGrid
+                board={board}
+                size={size}
+                isInteractive={!gameOver && currentTurn === "X"}
+                onCellClick={handleClick}
+              />
             </div>
           </div>
         </section>
@@ -174,6 +163,39 @@ const AiPlayerPanel = ({ icon, name, symbol, timer, active, align }) => (
     {align !== "right" && <SymbolBadge symbol={symbol} />}
   </div>
 );
+
+const BoardGrid = memo(({ board, size, isInteractive, onCellClick }) => (
+  <div
+    className="caro-board-grid"
+    style={{ gridTemplateColumns: `repeat(${size}, minmax(0, 1fr))` }}
+  >
+    {board.map((cell, index) => (
+      <CaroCell
+        key={index}
+        cell={cell}
+        index={index}
+        disabled={Boolean(cell) || !isInteractive}
+        onCellClick={onCellClick}
+      />
+    ))}
+  </div>
+));
+
+BoardGrid.displayName = "BoardGrid";
+
+const CaroCell = memo(({ cell, index, disabled, onCellClick }) => (
+  <button
+    type="button"
+    onClick={() => onCellClick(index)}
+    className={`caro-cell ${cell ? "caro-cell-filled" : ""}`}
+    disabled={disabled}
+  >
+    {cell === "X" && <span className="caro-mark caro-mark-x">X</span>}
+    {cell === "O" && <span className="caro-mark caro-mark-o">O</span>}
+  </button>
+));
+
+CaroCell.displayName = "CaroCell";
 
 const SymbolBadge = ({ symbol }) => (
   <span
